@@ -17,6 +17,10 @@ $configurator->createRobotLoader()
 $configurator->addConfig(__DIR__ . '/config/config.neon');
 $configurator->addConfig(__DIR__ . '/config/config.local.neon');
 
-$container = $configurator->createContainer();
+$configurator->onCompile[] = function ($configurator, $compiler) {
+    $compiler->addExtension('db', new DibiNetteExtension);
+};
+
+$container = $configurator->createContainer();  
 
 return $container;

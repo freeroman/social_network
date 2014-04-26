@@ -4,12 +4,15 @@
 # If you don't protect this directory from direct web access, anybody will be able to see your passwords.
 # http://nette.org/security-warning
 #
+
+db:
+	host: localhost
+	username: root
+	password: 
+	database: social_network
+	lazy: TRUE
+
 parameters:
-	database:
-		host: localhosts
-		username: roots
-		password:
-		database: social_network
 
 php:
 	date.timezone: Europe/Prague
@@ -30,3 +33,4 @@ services:
 	- App\Model\UserManager
 	- App\RouterFactory
 	router: @App\RouterFactory::createRouter
+	authorizator: UserManager(@db.connection)
