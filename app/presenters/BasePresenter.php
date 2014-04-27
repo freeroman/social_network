@@ -11,5 +11,10 @@ use Nette,
  */
 abstract class BasePresenter extends Nette\Application\UI\Presenter
 {
+    protected function startup() {
+        $this->template->userLoggedIn = $this->user->isLoggedIn();
+        $this->template->employee = $this->context->employees->getEmployeeById($this->user->getId());
+        parent::startup();
+    }
 
 }

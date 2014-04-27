@@ -1,4 +1,14 @@
 {* This is the welcome page, you can delete it *}
 
 {block content}
-{/block}
+
+<div class="jumbotron">
+    {control newMessage}
+</div>
+
+{foreach $msgs as $msg}
+<div class="jumbotron">
+    <p>{$msg->text}</p>
+    <small>{$msg->created_dt|date:'%e.%B %H:%M'}</small>
+</div>
+{/foreach}

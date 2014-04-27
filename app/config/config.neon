@@ -6,9 +6,9 @@
 #
 
 db:
-	host: localhost
+	host: 127.0.0.1
 	username: root
-	password: 
+	password: root
 	database: social_network
 	lazy: TRUE
 
@@ -30,7 +30,8 @@ nette:
 
 
 services:
-	- App\Model\UserManager
 	- App\RouterFactory
 	router: @App\RouterFactory::createRouter
-	authorizator: UserManager(@db.connection)
+	authorizator: App\Model\UserManager(@db.connection)
+	messages: MessageService(@db.connection)
+	employees: EmployeeService(@db.connection)
