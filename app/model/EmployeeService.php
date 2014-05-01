@@ -26,5 +26,9 @@ class EmployeeService
     public function getEmployeeById($id) {
         return $this->database->select('*')->from(CST::TABLE_EMPLOYEES)->where('id_employees=', $id)->fetch();
     }
+    
+    public function getEmployeesByKeyword($keyword) {
+        return $this->database->select('*')->from(CST::TABLE_EMPLOYEES)->where('first_name LIKE %~like~', $keyword)->fetchAll();
+    }
 }
 

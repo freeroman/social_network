@@ -1,0 +1,24 @@
+{block content}
+{*
+<div class="jumbotron">
+    <div class="row">
+         <div class="col-sm-6 col-md-4">
+            <a class="thumbnail" n:foreach="$result as $emp" n:href="Homepage:, $emp->id_employees">
+              <img src="{$basePath}/images/portrait.jpg" alt="..."/>
+            </a>{$emp->first_name}
+         </div>
+    </div>
+</div>*}
+         
+ <div class="row">
+  <div class="col-sm-6 col-md-4">
+    <div class="thumbnail" n:foreach="$result as $emp">
+      <img src="{$basePath}/images/portrait.jpg" alt="...">
+      <div class="caption">
+        <h3>Thumbnail label</h3>
+        <p>Some sgfd treer d treter d sdff erwe dsf et.</p>
+        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+      </div>
+    </div>
+  </div>
+</div>

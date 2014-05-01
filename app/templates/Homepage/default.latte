@@ -9,6 +9,7 @@
 {foreach $msgs as $msg}
 <div class="jumbotron">
     <p>{$msg->text}</p>
-    <small>{$msg->created_dt|date:'%e.%B %H:%M'}</small>
+    <small>{$msg->created_dt}</small>
+    {*<small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>*}
 </div>
 {/foreach}

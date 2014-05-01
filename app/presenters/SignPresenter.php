@@ -75,7 +75,7 @@ class SignPresenter extends BasePresenter
 
 		try {
 			$this->getUser()->login($values->username, $values->password);
-			$this->redirect('Homepage:');
+			$this->redirect('Homepage:default');
 
 		} catch (Nette\Security\AuthenticationException $e) {
 			$form->addError($e->getMessage());

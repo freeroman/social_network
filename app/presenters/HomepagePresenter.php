@@ -11,16 +11,25 @@ use Nette,
  */
 class HomepagePresenter extends SecurePresenter
 {
-
+        private $emp=null;
 	public function renderDefault()
 	{
-		$this->template->msgs = $this->context->messages->getMessagesByUserId($this->user->getId());
+            $this->template->msgs = $this->context->messages->getMessagesByUserId($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
+            //$this->emp = $this->context->employees->getEmployeeById($this->user->getId());
 	}
+        
+        public function actionDefault($id)
+	{
+            if ($id != null) {
+                $this->emp = $this->context->employees->getEmployeeById($id);
+            }
+        }
         
         protected function createComponentNewMessage()
         {
             $form = new Nette\Application\UI\Form();
             
+            $form->addHidden('id_walls', $this->emp == null ? $this->template->employee['id_walls'] : $this->emp['id_walls']);
             $form->addTextArea('text', 'Message')
                     ->setRequired('Text of message can\'t be empty.')
                     ->setAttribute('class', 'form-control');
@@ -64,7 +73,7 @@ class HomepagePresenter extends SecurePresenter
         public function processNewMessage($form){
             $values = $form->getValues();
             $message = array(
-                'id_walls' => $this->template->employee->id_walls,
+                'id_walls' => $values['id_walls'],
                 'id_employees' => $this->template->employee->id_employees,
                 'text' => $values['text'],
                 'created_dt' => date('Y-m-d H-i-s'),
@@ -73,8 +82,12 @@ class HomepagePresenter extends SecurePresenter
                 'id_sharing_types' => '1'
             );
             $this->context->messages->insertMessage($message);
-            $this->flashMessage('Message has been posted.');
-            $this->redirect('Homepage:');
+            $this->flashMessage('Message has been posted.', 'success');
+            $this->redirect('Homepage:default', $this->emp['id_employees']);
+        }
+        
+        public function renderSearch($keyword) {
+            $this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
         }
 
 }
