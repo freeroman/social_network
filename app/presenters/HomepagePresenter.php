@@ -16,13 +16,17 @@ class HomepagePresenter extends SecurePresenter
 	{
             $this->template->msgs = $this->context->messages->getMessagesByUserId($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
             //$this->emp = $this->context->employees->getEmployeeById($this->user->getId());
+            $this->template->friends = $this->context->employees->getFriendsById($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
 	}
         
         public function actionDefault($id)
 	{
             if ($id != null) {
                 $this->emp = $this->context->employees->getEmployeeById($id);
+            } else {
+                $this->emp = $this->context->employees->getEmployeeById($this->user->getId());
             }
+            $this->template->emp = $this->emp;
         }
         
         protected function createComponentNewMessage()
@@ -48,7 +52,8 @@ class HomepagePresenter extends SecurePresenter
 
             // make form and controls compatible with Twitter Bootstrap
             $form->getElementPrototype()->class('form-horizontal');
-
+            
+            /*
             foreach ($form->getControls() as $control) {
                     if ($control instanceof Controls\Button) {
                             //$control->getControlPrototype()->addClass(empty($usedPrimary) ? 'btn btn-default' : 'btn btn-default');
@@ -61,7 +66,7 @@ class HomepagePresenter extends SecurePresenter
                     } elseif ($control instanceof Controls\Checkbox || $control instanceof Controls\CheckboxList || $control instanceof Controls\RadioList) {
                             $control->getSeparatorPrototype()->setName('div')->addClass($control->getControlPrototype()->type);
                     }
-            }
+            }*/
             
             //$form->onValidate[] = callback($this, 'validateNewMessage');
             
@@ -101,6 +106,16 @@ class HomepagePresenter extends SecurePresenter
                 'valid_to' => '2999-12-31 23:59:59',
             );
             $this->context->employees->addFriend($relationship);
+            $this->redirect('Homepage:search');
+        }
+        
+        public function actionAcceptFriendship($id) {
+            $this->context->employees->updateFriendship(array('accepted'=>1), $id);
+            $this->redirect('Homepage:default');
+        }
+        
+        public function actionRemoveFriend($id) {
+            $this->context->employees->updateFriendship(array('valid_to'=>date('Y-m-d H-i-s')), $id);
             $this->redirect('Homepage:search');
         }
 

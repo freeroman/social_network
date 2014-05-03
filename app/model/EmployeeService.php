@@ -44,8 +44,9 @@ class EmployeeService
                 id_employees1 =',$id,'
                 OR id_employees2 =',$id,'
             ) r
-            ON r.id_employees2 = e.id_employees
-            OR r.id_employees1 = e.id_employees
+            ON (NOW() BETWEEN created_dt AND valid_to)
+                AND (r.id_employees2 = e.id_employees
+                OR r.id_employees1 = e.id_employees)
             WHERE e.id_employees!=', $id)->fetchAll();
     }
     
@@ -56,7 +57,26 @@ class EmployeeService
     public function getPendingFriendshipRequests($id) {
         return $this->database->query('SELECT * FROM relationships
             INNER JOIN employees ON id_employees=id_employees1
-            WHERE id_employees2=',$id,' AND accepted=0')->fetchAll();
+            WHERE id_employees2=',$id,' AND accepted=0 AND (%s',date('Y-m-d H-i-s'),'BETWEEN created_dt AND valid_to)')->fetchAll();
+    }
+    
+    public function updateFriendship($data, $id) {
+        $this->database->update(CST::TABLE_RELATIONSHIPS, $data)->where('id_relationships=', $id)->execute();
+    }
+    
+    public function getFriendsById($id) {
+        return $this->database->query('SELECT * FROM employees
+            RIGHT JOIN
+            (SELECT id_employees2 id_employees FROM relationships
+            WHERE id_employees1=', $id ,' AND (NOW() BETWEEN created_dt AND valid_to) AND accepted=1
+            UNION
+            SELECT id_employees1 id_employees FROM relationships
+            WHERE id_employees2=', $id ,' AND (NOW() BETWEEN created_dt AND valid_to) AND accepted=1) rel
+            USING (id_employees)')->fetchAll();
+    }
+    
+    public function addToGroup($data) {
+        $this->database->insert(CST::TABLE_GROUPS_EMPLOYEES, $data)->execute();
     }
 }
 

@@ -13,5 +13,6 @@ class CST
     const TABLE_RELATIONSHIPS = "relationships";
     const TABLE_SHARING_TYPES = "sharing_types";
     const TABLE_WALLS = "walls";
+    const TABLE_GROUPS_EMPLOYEES = "groups_employees";
     
 }

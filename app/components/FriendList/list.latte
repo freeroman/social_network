@@ -1,0 +1,44 @@
+{snippet}
+
+    {if !empty($friends)}
+        <table class="table table-striped">
+            <tr>
+                <th>First name</th>
+                <th>Surname</th>
+                <th>Pridate</th>
+            </tr>        
+            {foreach $friends as $friend}
+                <tr>
+                    <td><a class="ajax" n:href="detail!, $friend->id_employees">{$friend->first_name}</a></td>
+                    <td>{$friend->surname}</td>
+                    {*<td class="{$ticket->status|statusColor}">{$ticket->status|status}</td>*}
+                    <td>
+                        {*{if !empty($friend->id_employees)}
+                            {$ticket->surname} {$ticket->firstname|truncate:2:'.'}    
+                        {else}*}
+                            <a class="ajax" n:href="assign!, $friend->id_employees">Přiřadit sobě</a>    
+                        {*{/if}*}
+                    </td>
+                </tr>
+            {/foreach}
+            {*
+            {if $showPaging}
+                <tr>
+                    <td colspan="5">
+                        <ul class="pager f-right">
+                            {if $showPrev}
+                                <li><a class="ajax" n:href="page!, $offset - $perPage">Předchozí</a></li>
+                                {/if}
+                                {if $showNext}
+                                <li><a class="ajax" n:href="page!, $offset + $perPage">Další</a></li>
+                                {/if}
+                        </ul>
+                    </td>
+                </tr>    
+            {/if} *}           
+        </table>
+    {else}
+        <p>Nenalezeny žádné tikety.</p>    
+    {/if}
+
+{/snippet}
