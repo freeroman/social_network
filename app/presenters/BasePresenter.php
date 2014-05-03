@@ -13,7 +13,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 {    
     protected function startup() {
         $this->template->userLoggedIn = $this->user->isLoggedIn();
-        $this->template->employee = $this->context->employees->getEmployeeById($this->user->getId());
+        //$this->template->employee = $this->context->employees->getEmployeeById($this->user->getId());
+        $requests = $this->context->employees->getPendingFriendshipRequests($this->user->getId());
+        $this->template->requests = $requests;
+        $this->template->count = count($requests);
         parent::startup();
     }
     

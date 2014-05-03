@@ -29,7 +29,7 @@ class HomepagePresenter extends SecurePresenter
         {
             $form = new Nette\Application\UI\Form();
             
-            $form->addHidden('id_walls', $this->emp == null ? $this->template->employee['id_walls'] : $this->emp['id_walls']);
+            $form->addHidden('id_walls', $this->emp == null ? $this->user->getIdentity()->getData()['id_walls'] : $this->emp['id_walls']);
             $form->addTextArea('text', 'Message')
                     ->setRequired('Text of message can\'t be empty.')
                     ->setAttribute('class', 'form-control');
@@ -87,7 +87,21 @@ class HomepagePresenter extends SecurePresenter
         }
         
         public function renderSearch($keyword) {
-            $this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
+            //$this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
+            $this->template->friends = $this->context->employees->getFriendsByKeyword($keyword, $this->user->getId());
+            //\Nette\Diagnostics\Debugger::dump($this->template->friends);
+        }
+        
+        public function actionAddFriend($id) {
+            $relationship = array(
+                'id_employees1' => $this->user->getId(),
+                'id_employees2' => $id,
+                'created_dt' => date('Y-m-d H-i-s'),
+                'valid_from' => '1000-01-01 00:00:00',
+                'valid_to' => '2999-12-31 23:59:59',
+            );
+            $this->context->employees->addFriend($relationship);
+            $this->redirect('Homepage:search');
         }
 
 }
