@@ -78,5 +78,23 @@ class EmployeeService
     public function addToGroup($data) {
         $this->database->insert(CST::TABLE_GROUPS_EMPLOYEES, $data)->execute();
     }
+    
+    public function getEmployeesByKeywordWithGroup($keyword, $id, $limit=null, $offset=null) {
+        $select = $this->database->query('SELECT *
+            FROM employees
+            LEFT JOIN
+            (
+                    SELECT * FROM groups_employees WHERE id_groups=',$id,'
+            ) g USING (id_employees)
+            WHERE (first_name LIKE %~like~', $keyword, ' OR surname LIKE %~like~', $keyword,')');
+        if ($limit) {
+            $select->limit($limit);
+        }
+
+        if ($offset) {
+            $select->offset($offset);
+        }
+        return $select->fetchAll();
+    }
 }
 

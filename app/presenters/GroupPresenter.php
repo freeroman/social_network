@@ -22,7 +22,19 @@ class GroupPresenter extends SecurePresenter{
     
     public function createComponentFriendList()
     {
-        $list = new \FriendList($this->context->employees);
+        $list = new \FriendList($this->context->employees, $this->keyword);
         return $list;       
+    }
+    
+    public function createComponentSearcgEmp() {
+        $form = $this->createComponentSearch();
+        $form->onSuccess = null;
+        $form->onSuccess[] =  callback($this, 'processSearchEmp');
+        return $form;
+    }
+    
+    public function processSearchEmp($form) {
+        $values = $form->getValues();
+        $this->keyword = $values['search'];
     }
 }

@@ -1,11 +1,11 @@
 {snippet}
-
+    {control searchEmp}
     {if !empty($friends)}
         <table class="table table-striped">
             <tr>
                 <th>First name</th>
                 <th>Surname</th>
-                <th>Pridate</th>
+                <th>Invited</th>
             </tr>        
             {foreach $friends as $friend}
                 <tr>
@@ -13,18 +13,18 @@
                     <td>{$friend->surname}</td>
                     {*<td class="{$ticket->status|statusColor}">{$ticket->status|status}</td>*}
                     <td>
-                        {*{if !empty($friend->id_employees)}
-                            {$ticket->surname} {$ticket->firstname|truncate:2:'.'}    
-                        {else}*}
-                            <a class="ajax" n:href="assign!, $friend->id_employees">Přiřadit sobě</a>    
-                        {*{/if}*}
+                        {if !empty($friend->id_groups)}
+                            Already in there    
+                        {else}
+                            <a class="ajax" n:href="assign!, $friend->id_employees">Invite</a>    
+                        {/if}
                     </td>
                 </tr>
             {/foreach}
-            {*
+            
             {if $showPaging}
                 <tr>
-                    <td colspan="5">
+                    <td colspan="3">
                         <ul class="pager f-right">
                             {if $showPrev}
                                 <li><a class="ajax" n:href="page!, $offset - $perPage">Předchozí</a></li>
@@ -35,10 +35,10 @@
                         </ul>
                     </td>
                 </tr>    
-            {/if} *}           
+            {/if}          
         </table>
     {else}
-        <p>Nenalezeny žádné tikety.</p>    
+        <p>Employee not found.</p>    
     {/if}
 
 {/snippet}
