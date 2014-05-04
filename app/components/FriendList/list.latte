@@ -20,22 +20,7 @@
                         {/if}
                     </td>
                 </tr>
-            {/foreach}
-            
-            {if $showPaging}
-                <tr>
-                    <td colspan="3">
-                        <ul class="pager f-right">
-                            {if $showPrev}
-                                <li><a class="ajax" n:href="page!, $offset - $perPage">Předchozí</a></li>
-                                {/if}
-                                {if $showNext}
-                                <li><a class="ajax" n:href="page!, $offset + $perPage">Další</a></li>
-                                {/if}
-                        </ul>
-                    </td>
-                </tr>    
-            {/if}          
+            {/foreach}          
         </table>
     {else}
         <p>Employee not found.</p>    
