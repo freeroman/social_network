@@ -14,9 +14,10 @@ class FeedPresenter extends SecurePresenter
         private $emp=null;
 	public function renderDefault()
 	{
-            $this->template->msgs = $this->context->messages->getMessagesByUserId($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
+            $this->template->messages = $this->context->messages->getFriendsMessages($this->user->getId());
+            //$this->template->msgs = $this->context->messages->getMessagesByUserId($this->user->getId());
             //$this->emp = $this->context->employees->getEmployeeById($this->user->getId());
-            $this->template->friends = $this->context->employees->getFriendsById($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
+            //$this->template->friends = $this->context->employees->getFriendsById($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
 	}
         
         public function actionDefault($id)

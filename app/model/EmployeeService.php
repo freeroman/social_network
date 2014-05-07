@@ -47,7 +47,19 @@ class EmployeeService
             ON (NOW() BETWEEN created_dt AND valid_to)
                 AND (r.id_employees2 = e.id_employees
                 OR r.id_employees1 = e.id_employees)
-            WHERE e.id_employees!=', $id)->fetchAll();
+            WHERE e.id_employees!=', $id)->fetchAll(null, 6);
+    }
+    
+    public function getGroupsByKeyword($keyword){
+        return $this->database->select('*')->from(CST::TABLE_GROUPS)->where('name LIKE %~like~', $keyword)->fetchAll(null, 6);
+    }
+    
+    public function getGroupById($id) {
+        return $this->database->select('*')
+                ->from(CST::TABLE_GROUPS)
+                ->leftJoin(CST::TABLE_EMPLOYEES)
+                ->using('(id_employees)')
+                ->where('id_groups=', $id)->fetch(); 
     }
     
     public function addFriend($data) {
@@ -87,6 +99,14 @@ class EmployeeService
                     SELECT * FROM groups_employees WHERE id_groups=',$id,'
             ) g USING (id_employees)
             WHERE (first_name LIKE %~like~', $keyword, ' OR surname LIKE %~like~', $keyword,')')->fetchAll();
+    }
+    
+    public function getGroupsWithNewestMessage($id) {
+        return $this->database->query('SELECT * FROM groups_employees ge
+            LEFT JOIN groups g USING (id_groups)
+            LEFT JOIN employees e ON e.id_employees=g.id_employees
+            LEFT JOIN messages m ON m.id_walls=g.id_walls
+            WHERE ge.id_employees=', $id)->fetchAll();
     }
 }
 

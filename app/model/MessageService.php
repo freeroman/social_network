@@ -21,4 +21,20 @@ class MessageService{
         $this->db->insert(CST::TABLE_MESSAGES, $data)->execute();
     }
     
+    public function getMessagesByGroupId($id){
+        $this->db->select('*')->from(CST::TABLE_MESSAGES)->as('m')->leftJoin(CST::TABLE_GROUPS)->as('g')->on('g.id_walls=m.id_walls')->where('g.id_groups=%i', $id)->fetchAll();
+    }
+    
+    public function getFriendsMessages($id) {
+        return $this->db->query('SELECT e.*, m.* FROM relationships
+            LEFT JOIN employees e ON id_employees=id_employees2
+            INNER JOIN messages m USING(id_employees)
+            WHERE id_employees1=',$id,'
+            UNION
+            SELECT e.*, m.* FROM relationships
+            LEFT JOIN employees e ON id_employees=id_employees1
+            INNER JOIN messages m USING(id_employees)
+            WHERE id_employees2=',$id)->fetchAll();
+    }
+    
 }

@@ -79,7 +79,7 @@ class HomepagePresenter extends SecurePresenter
             $values = $form->getValues();
             $message = array(
                 'id_walls' => $values['id_walls'],
-                'id_employees' => $this->template->employee->id_employees,
+                'id_employees' => $this->user->getIdentity()->getData()['id_employees'],
                 'text' => $values['text'],
                 'created_dt' => date('Y-m-d H-i-s'),
                 'visible_from' => '1000-01-01 00:00:00',
@@ -94,6 +94,7 @@ class HomepagePresenter extends SecurePresenter
         public function renderSearch($keyword) {
             //$this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
             $this->template->friends = $this->context->employees->getFriendsByKeyword($keyword, $this->user->getId());
+            $this->template->groups = $this->context->employees->getGroupsByKeyword($keyword);
             //\Nette\Diagnostics\Debugger::dump($this->template->friends);
         }
         

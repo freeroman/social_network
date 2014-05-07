@@ -1,14 +1,4 @@
 {block content}
-{*
-<div class="jumbotron">
-    <div class="row">
-         <div class="col-sm-6 col-md-4">
-            <a class="thumbnail" n:foreach="$result as $emp" n:href="Homepage:, $emp->id_employees">
-              <img src="{$basePath}/images/portrait.jpg" alt="..."/>
-            </a>{$emp->first_name}
-         </div>
-    </div>
-</div>*}
          
  <div class="row">
   <div class="col-md-2" n:foreach="$friends as $emp">
@@ -29,4 +19,12 @@
         {/if}
     </div>
   </div>
+</div>
+    
+<div class="row">
+    <div class="col-md-2" n:foreach="$groups as $group">
+        <div class="thumbnail">
+            <a n:href="Group:detail, $group->id_groups">{$group->name}</a>
+        </div>
+    </div>
 </div>
