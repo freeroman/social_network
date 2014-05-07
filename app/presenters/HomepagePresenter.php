@@ -11,24 +11,26 @@ use Nette,
  */
 class HomepagePresenter extends SecurePresenter
 {
-        private $emp=null;
-	public function renderDefault()
-	{
-            $this->template->msgs = $this->context->messages->getMessagesByUserId($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
-            //$this->emp = $this->context->employees->getEmployeeById($this->user->getId());
-            $this->template->friends = $this->context->employees->getFriendsById($this->emp == null ? $this->user->getId() : $this->emp['id_employees']);
-	}
-        
-        public function actionDefault($id)
-	{
-            if ($id != null) {
-                $this->emp = $this->context->employees->getEmployeeById($id);
-            } else {
-                $this->emp = $this->context->employees->getEmployeeById($this->user->getId());
-            }
-            $this->template->emp = $this->emp;
-        }
-        
+    private $emp=null;
+    public function renderDetail($id)
+    {
+        $this->template->msgs = $this->context->messages->getMessagesByUserId($id);
+        $emp = $this->context->employees->getEmployeeById($id);
+        $this->emp = $emp;
+        $this->template->emp = $emp;
+        $this->template->friends = $this->context->employees->getFriendsById($id);
+    }
+    public function renderDefault()
+    {
+        $this->template->messages = $this->context->messages->getFriendsMessages($this->user->getId());
+    }
+    
+    public function createComponentNewMessage()
+    {
+        $list = new \NewMessage($this->context->messages, $this->user->getId(), $this->emp['id_walls']);
+        return $list;
+    }
+        /*
         protected function createComponentNewMessage()
         {
             $form = new Nette\Application\UI\Form();
@@ -53,7 +55,7 @@ class HomepagePresenter extends SecurePresenter
             // make form and controls compatible with Twitter Bootstrap
             $form->getElementPrototype()->class('form-horizontal');
             
-            /*
+            
             foreach ($form->getControls() as $control) {
                     if ($control instanceof Controls\Button) {
                             //$control->getControlPrototype()->addClass(empty($usedPrimary) ? 'btn btn-default' : 'btn btn-default');
@@ -66,15 +68,14 @@ class HomepagePresenter extends SecurePresenter
                     } elseif ($control instanceof Controls\Checkbox || $control instanceof Controls\CheckboxList || $control instanceof Controls\RadioList) {
                             $control->getSeparatorPrototype()->setName('div')->addClass($control->getControlPrototype()->type);
                     }
-            }*/
+            }
             
             //$form->onValidate[] = callback($this, 'validateNewMessage');
             
-            $form->onSuccess[] =  callback($this, 'processNewMessage');
-            
+            $form->onSuccess[] =  callback($this, 'processNewMessage');            
             return $form;
-        }
-        
+        }*/
+        /*
         public function processNewMessage($form){
             $values = $form->getValues();
             $message = array(
@@ -89,35 +90,35 @@ class HomepagePresenter extends SecurePresenter
             $this->context->messages->insertMessage($message);
             $this->flashMessage('Message has been posted.', 'success');
             $this->redirect('Homepage:default', $this->emp['id_employees']);
-        }
+        }*/
         
-        public function renderSearch($keyword) {
-            //$this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
-            $this->template->friends = $this->context->employees->getFriendsByKeyword($keyword, $this->user->getId());
-            $this->template->groups = $this->context->employees->getGroupsByKeyword($keyword);
-            //\Nette\Diagnostics\Debugger::dump($this->template->friends);
-        }
-        
-        public function actionAddFriend($id) {
-            $relationship = array(
-                'id_employees1' => $this->user->getId(),
-                'id_employees2' => $id,
-                'created_dt' => date('Y-m-d H-i-s'),
-                'valid_from' => '1000-01-01 00:00:00',
-                'valid_to' => '2999-12-31 23:59:59',
-            );
-            $this->context->employees->addFriend($relationship);
-            $this->redirect('Homepage:search');
-        }
-        
-        public function actionAcceptFriendship($id) {
-            $this->context->employees->updateFriendship(array('accepted'=>1), $id);
-            $this->redirect('Homepage:default');
-        }
-        
-        public function actionRemoveFriend($id) {
-            $this->context->employees->updateFriendship(array('valid_to'=>date('Y-m-d H-i-s')), $id);
-            $this->redirect('Homepage:search');
-        }
+    public function renderSearch($keyword) {
+        //$this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
+        $this->template->friends = $this->context->employees->getFriendsByKeyword($keyword, $this->user->getId());
+        $this->template->groups = $this->context->employees->getGroupsByKeyword($keyword);
+        //\Nette\Diagnostics\Debugger::dump($this->template->friends);
+    }
+
+    public function actionAddFriend($id) {
+        $relationship = array(
+            'id_employees1' => $this->user->getId(),
+            'id_employees2' => $id,
+            'created_dt' => date('Y-m-d H-i-s'),
+            'valid_from' => '1000-01-01 00:00:00',
+            'valid_to' => '2999-12-31 23:59:59',
+        );
+        $this->context->employees->addFriend($relationship);
+        $this->redirect('Homepage:search');
+    }
+
+    public function actionAcceptFriendship($id) {
+        $this->context->employees->updateFriendship(array('accepted'=>1), $id);
+        $this->redirect('Homepage:default');
+    }
+
+    public function actionRemoveFriend($id) {
+        $this->context->employees->updateFriendship(array('valid_to'=>date('Y-m-d H-i-s')), $id);
+        $this->redirect('Homepage:search');
+    }
 
 }

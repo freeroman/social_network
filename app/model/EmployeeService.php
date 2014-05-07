@@ -55,9 +55,9 @@ class EmployeeService
     }
     
     public function getGroupById($id) {
-        return $this->database->select('*')
-                ->from(CST::TABLE_GROUPS)
-                ->leftJoin(CST::TABLE_EMPLOYEES)
+        return $this->database->select('e.id_employees, e.first_name, e.surname, g.*')
+                ->from(CST::TABLE_GROUPS)->as('g')
+                ->leftJoin(CST::TABLE_EMPLOYEES)->as('e')
                 ->using('(id_employees)')
                 ->where('id_groups=', $id)->fetch(); 
     }

@@ -1,0 +1,37 @@
+{* This is the welcome page, you can delete it *}
+
+{block content}
+
+
+    <div class="row">
+        <div class="col-md-2">
+            <div class="thumbnail">
+                <img src="{$basePath}/images/portrait.jpg" alt="...">
+                <div class="caption">
+                    <h4>First name</h4>
+                    <p>{$emp->first_name}</p>
+                    <h4>Surname</h4>
+                    <p>{$emp->surname}</p>
+                    <h4>Job title</h4>
+                    <p>{$emp->job_title}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            {control newMessage}
+            <div n:foreach="$friends as $friend" class="thumbnail col-md-1">
+                <a n:href="Homepage:detail, $friend->id_employees">
+                    <img src="{$basePath}/images/portrait.jpg" alt="..." width="50" height="50">
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+{foreach $msgs as $msg}
+<div class="jumbotron">
+    <p>{$msg->text}</p>
+    <small>{$msg->created_dt}</small>
+    {*<small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>*}
+</div>
+{/foreach}

@@ -1,3 +1,7 @@
 {* Latte template *}
 
 {block content}
+
+<div n:foreach="$groups as $group" class="jumbotron">
+    <h3><a n:href="Group:detail, $group->id_groups">{$group->name}</a></h3>
+</div>

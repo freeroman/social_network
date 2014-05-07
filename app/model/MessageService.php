@@ -22,7 +22,14 @@ class MessageService{
     }
     
     public function getMessagesByGroupId($id){
-        $this->db->select('*')->from(CST::TABLE_MESSAGES)->as('m')->leftJoin(CST::TABLE_GROUPS)->as('g')->on('g.id_walls=m.id_walls')->where('g.id_groups=%i', $id)->fetchAll();
+        return $this->db->select('*')
+                ->from(CST::TABLE_MESSAGES)->as('m')
+                ->leftJoin(CST::TABLE_GROUPS)->as('g')
+                ->on('g.id_walls=m.id_walls')
+                ->leftJoin(CST::TABLE_EMPLOYEES)->as('e')
+                ->on('m.id_employees=e.id_employees')
+                ->where('g.id_groups=%i', $id)
+                ->fetchAll();
     }
     
     public function getFriendsMessages($id) {

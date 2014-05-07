@@ -26,7 +26,7 @@ class FriendList extends \Nette\Application\UI\Control
     
     public function handleDetail($id)
     {        
-        $this->presenter->redirect('Homepage:default', $id);
+        $this->presenter->redirect('Homepage:detail', $id);
     }
     
     public function handleAssign($id)

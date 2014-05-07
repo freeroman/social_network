@@ -4,13 +4,12 @@
 
 <div class="jumbotron">
     <h3>{$group->name}</h3>
-    <h4>Admin: <a n:href="Homepage:default, $group->id_employees">{$group->first_name} {$group->surname}</a></h4>
+    <h4>Admin: <a n:href="Homepage:detail, $group->id_employees">{$group->first_name} {$group->surname}</a></h4>
+    {control newMessage}
 </div>
-    
-{if $messages}
+
 <div n:foreach="$messages as $msg" class="jumbotron">
     <p>{$msg->text}</p>
     <small>{$msg->created_dt}</small>
-    <a n:href="Homepage:default, $msg->id_employees">{$msg->first_name} {$msg->surname}</a>    
+    <a n:href="Homepage:detail, $msg->id_employees">{$msg->first_name} {$msg->surname}</a>    
 </div>
-{/if}
