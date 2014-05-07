@@ -14,9 +14,6 @@ class NewMessage extends \Nette\Application\UI\Control
     private $wall;
     
     private $emp;
-    
-    /** @persistent */
-    public $keyword;
             
     public function __construct(MessageService $service, $emp, $wall)
     {

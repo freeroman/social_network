@@ -1,10 +1,12 @@
 {block content}
-
-{foreach $messages as $msg}
-<div class="jumbotron">
-    <p>{$msg->text}</p>
-    <small>{$msg->created_dt}</small>
-    <a n:href="Homepage:detail, $msg->id_employees">{$msg->first_name} {$msg->surname}</a>
-    {*<small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>*}
+<div class="row">
+    {foreach $messages as $msg}
+    <div class="panel panel-default">
+        <div class="panel-body">{$msg->text}</div>
+        <div class="panel-footer">{$msg->created_dt}
+            <a n:href="Homepage:detail, $msg->id_employees">{$msg->first_name} {$msg->surname}</a>
+        </div>
+        {*<small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>*}
+    </div>
+    {/foreach}
 </div>
-{/foreach}

@@ -4,4 +4,6 @@
 
 <div n:foreach="$groups as $group" class="jumbotron">
     <h3><a n:href="Group:detail, $group->id_groups">{$group->name}</a></h3>
+    {*<p>{$group->text}</p>
+    <small>Last activity at: {$group->created_dt}</small>*}
 </div>

@@ -4,7 +4,11 @@
   <div class="col-md-2" n:foreach="$friends as $emp">
     <a n:href="Homepage:detail, $emp->id_employees">
         <div class="thumbnail">
-          <img src="{$basePath}/images/portrait.jpg" alt="...">
+            {if $emp->avatar}
+                <img src="{$basePath}/images/portraits/{$emp->avatar}" class="avatar" alt="...">
+            {else}
+                <img src="{$basePath}/images/portrait.jpg" class="avatar" alt="...">
+            {/if}
         </div>    
     </a>
     <div class="caption">

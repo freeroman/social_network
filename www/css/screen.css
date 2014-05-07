@@ -25,6 +25,20 @@ a[href^="error:"] {
 	color: white;
 }
 
+.avatar{
+    min-height: 155px;
+    min-width: 155px;
+    max-height: 155px;
+    max-width: 155px;
+}
+
+.small-avatar{
+    min-height: 50px;
+    min-width: 50px;
+    max-height: 50px;
+    max-width: 50px;
+}
+
 /*
 form th, form td {
 	vertical-align: top;

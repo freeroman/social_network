@@ -6,12 +6,15 @@ class FriendList extends \Nette\Application\UI\Control
     /** @var TicketService */
     private $employeeService;
     
+    private $id_group;
+    
     /** @persistent */
     public $keyword;
             
-    public function __construct(EmployeeService $service)
+    public function __construct(EmployeeService $service, $id)
     {
         $this->employeeService = $service;
+        $this->id_group = $id;
     }
     
     public function render()
@@ -19,7 +22,7 @@ class FriendList extends \Nette\Application\UI\Control
         $template = $this->template;
         $template->setFile(__DIR__ . '/list.latte');
         
-        $template->friends = $this->employeeService->getEmployeesByKeywordWithGroup($this->keyword,$this->presenter->id_groups);
+        $template->friends = $this->employeeService->getEmployeesByKeywordWithGroup($this->keyword,$this->id_group);
 
         $template->render();
     }
@@ -33,7 +36,7 @@ class FriendList extends \Nette\Application\UI\Control
     {        
         $data = array(
             'id_employees' => $id,
-            'id_groups' => $this->presenter->id_groups
+            'id_groups' => $this->id_group
         );
         
         $this->employeeService->addToGroup($data);

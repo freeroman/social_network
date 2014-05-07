@@ -8,7 +8,7 @@ use Nette,
 class GroupPresenter extends SecurePresenter{
     
     //private $detailId;
-    public $id_groups=1;
+    private $id_groups=null;
     
     private $wall;
     
@@ -22,21 +22,63 @@ class GroupPresenter extends SecurePresenter{
     }
     
     public function renderDetail($id) {
-        $group = $this->context->employees->getGroupById($id);
+        $group = $this->context->employees->getGroupById($id, FALSE);
         $this->template->group = $group;
         $this->wall = $group->id_walls;
         $this->template->messages = $this->context->messages->getMessagesByGroupId($id);
     }
     
-    public function createComponentFriendList()
+    protected function createComponentFriendList()
     {
-        $list = new \FriendList($this->context->employees);
+        $list = new \FriendList($this->context->employees, $this->id_groups);
         return $list;       
     }
     
-    public function createComponentNewMessage()
+    protected function createComponentNewMessage()
     {
         $list = new \NewMessage($this->context->messages, $this->user->getId(), $this->wall);
         return $list;
+    }
+    
+    protected function createComponentNewGroup()
+    {
+        $form = new Nette\Application\UI\Form();
+        $form->addGroup('New group');
+        $form->addText('name', 'Name')
+                ->setRequired('Name can not be empty')
+                ->setAttribute('class', 'form-control');
+        $form->setCurrentGroup(NULL);
+              //  ->setOption('container', 'fieldset id=adress');
+        //$form->setCurrentGroup(NULL);
+        $form->getElementPrototype()->class('form-horizontal');
+        $form->addSubmit('send', 'Vytvořit')
+                ->setAttribute('class', 'btn btn-default');
+        
+        $renderer = $form->getRenderer();
+        $renderer->wrappers['controls']['container'] = null;
+        //$renderer->wrappers['pair']['container'] = 'div class=form-group';
+        $renderer->wrappers['pair']['.error'] = 'has-error';
+        $renderer->wrappers['control']['container'] = 'div class=form-group';
+        //$renderer->wrappers['label']['container'] = 'small';
+        $renderer->wrappers['control']['description'] = 'span class=help-block';
+        $renderer->wrappers['control']['errorcontainer'] = 'span class=help-block';
+
+        // make form and controls compatible with Twitter Bootstrap
+
+        //$form->onValidate[] = callback($this, 'validateEmployeeForm');
+
+        $form->onSuccess[] =  callback($this, 'processNewEmployeeForm');
+        return $form;
+    }
+    
+    public function processNewEmployeeForm($form) {
+        $values = $form->getValues();
+        $group = array(
+            'name' => $values['name'],
+            'id_employees' => $this->user->getId(),
+            'id_walls' => $this->context->employees->newWall()
+        );
+        $id = $this->context->employees->insertGroup($group);
+        $this->redirect('Group:detail', $id);
     }
 }

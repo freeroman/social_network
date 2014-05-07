@@ -47,19 +47,33 @@ class EmployeeService
             ON (NOW() BETWEEN created_dt AND valid_to)
                 AND (r.id_employees2 = e.id_employees
                 OR r.id_employees1 = e.id_employees)
-            WHERE e.id_employees!=', $id)->fetchAll(null, 6);
+            WHERE e.id_employees!=', $id, 'AND (first_name LIKE %~like~', $keyword, ' OR surname LIKE %~like~', $keyword,')')->fetchAll(null, 6);
     }
     
     public function getGroupsByKeyword($keyword){
         return $this->database->select('*')->from(CST::TABLE_GROUPS)->where('name LIKE %~like~', $keyword)->fetchAll(null, 6);
+        /*
+         * $sql = $this->database->select('*')->from(CST::TABLE_GROUPS);
+        if ($keyword===NULL)
+        {
+            return $sql->where('name LIKE %~like~', $keyword)->fetchAll(null, 6);
+        } else {
+            return $sql->innerJoin(CST::TABLE_GROUPS_EMPLOYEES)->as('ge')
+                    ->using('id_groups')
+                    ->where('ge.id_employees=%i', $id)->fetchAll();
+         */
     }
     
-    public function getGroupById($id) {
-        return $this->database->select('e.id_employees, e.first_name, e.surname, g.*')
+    public function getGroupById($id, $employee=FALSE) {
+        $sql = $this->database->select('e.id_employees, e.first_name, e.surname, g.*')
                 ->from(CST::TABLE_GROUPS)->as('g')
                 ->leftJoin(CST::TABLE_EMPLOYEES)->as('e')
-                ->using('(id_employees)')
-                ->where('id_groups=', $id)->fetch(); 
+                ->using('(id_employees)');
+        if($employee){            
+            return $sql->where('e.id_employees=', $id)->fetchAll();
+        } else {
+            return $sql->where('id_groups=', $id)->fetch(); 
+        }
     }
     
     public function addFriend($data) {
@@ -102,11 +116,20 @@ class EmployeeService
     }
     
     public function getGroupsWithNewestMessage($id) {
-        return $this->database->query('SELECT * FROM groups_employees ge
+        /*return $this->database->query('SELECT * FROM groups_employees ge
             LEFT JOIN groups g USING (id_groups)
             LEFT JOIN employees e ON e.id_employees=g.id_employees
             LEFT JOIN messages m ON m.id_walls=g.id_walls
+            WHERE ge.id_employees=', $id,'ORDER BY created_dt desc')->fetchAll(null, 1);*/
+        return $this->database->query('SELECT * FROM groups_employees ge
+            LEFT JOIN groups g USING (id_groups)
+            LEFT JOIN employees e ON e.id_employees=g.id_employees
             WHERE ge.id_employees=', $id)->fetchAll();
+    }
+    
+    public function insertGroup($data) {
+        $this->database->insert(CST::TABLE_GROUPS, $data)->execute();
+        return $this->database->getInsertId();
     }
 }
 

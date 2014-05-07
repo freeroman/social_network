@@ -66,7 +66,7 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 	 */
 	public function add($data)
 	{
-		$this->database->insert(self::TABLE_NAME, $data)->execute();
+            $this->database->insert(self::TABLE_NAME, $data)->execute();
 	}
 
 }

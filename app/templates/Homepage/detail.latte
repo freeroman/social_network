@@ -5,8 +5,12 @@
 
     <div class="row">
         <div class="col-md-2">
-            <div class="thumbnail">
-                <img src="{$basePath}/images/portrait.jpg" alt="...">
+            <div class="row">
+                {if $emp->avatar}
+                    <img src="{$basePath}/images/portraits/{$emp->avatar}" class="avatar" alt="...">
+                {else}
+                    <img src="{$basePath}/images/portrait.jpg" class="avatar" alt="...">
+                {/if}
                 <div class="caption">
                     <h4>First name</h4>
                     <p>{$emp->first_name}</p>
@@ -16,22 +20,55 @@
                     <p>{$emp->job_title}</p>
                 </div>
             </div>
+            <div class="row">
+                <h4>Friends</h4>
+                {*
+                <div n:foreach="$friends as $friend" class="col-md-12 thumbnail">
+                    <a n:href="Homepage:detail, $friend->id_employees">
+                    {if $friend->avatar}
+                        <img src="{$basePath}/images/portraits/{$friend->avatar}" class="small-avatar" alt="...">
+                    {else}
+                        <img src="{$basePath}/images/portrait.jpg" class="small-avatar" alt="...">
+                    {/if}
+                    </a>
+                </div>
+                *}
+                <div n:foreach="$friends as $friend" class="col-md-12">
+                    <a n:href="Homepage:detail, $friend->id_employees"><span class="glyphicon glyphicon-user"></span> {$friend->first_name} {$friend->surname}</a>
+                </div>
+            </div>
+            <div class="row">
+                <h4>Groups</h4>
+                <div n:foreach="$groups as $group" class="col-md-12">
+                    <a n:href="Group:detail, $group->id_groups"><span class="glyphicon glyphicon-info-sign"></span> {$group->name}</a>
+                </div>
+            </div>
         </div>
         <div class="col-md-8">
             {control newMessage}
-            <div n:foreach="$friends as $friend" class="thumbnail col-md-1">
-                <a n:href="Homepage:detail, $friend->id_employees">
-                    <img src="{$basePath}/images/portrait.jpg" alt="..." width="50" height="50">
-                </a>
+            <div class="row">
+                {foreach $msgs as $msg}
+                <blockquote>
+                    <h4>{$msg->text}</h4>
+                    <footer>{$msg->created_dt}</footer>
+                    {*<small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>*}
+                </blockquote>
+                {/foreach}
+                {if !$msgs}
+                    <blockquote>
+                        <h2 n:if="!$iterations">There are not any messages yet!</h2>
+                    </blockquote>
+                {/if}
             </div>
         </div>
     </div>
 
-
+{*
 {foreach $msgs as $msg}
 <div class="jumbotron">
     <p>{$msg->text}</p>
     <small>{$msg->created_dt}</small>
-    {*<small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>*}
+    <small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>
 </div>
 {/foreach}
+    *}
