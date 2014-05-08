@@ -13,8 +13,8 @@
                     <td>{$emp->surname}</td>
                     {*<td class="{$ticket->status|statusColor}">{$ticket->status|status}</td>*}
                     <td>
-                        {if !empty($emp->id_groups)}
-                            Already in there    
+                        {if !empty($emp->id_groups) or !empty($emp->id_events)}
+                            Invited
                         {else}
                             <a class="ajax" n:href="assign!, $emp->id_employees">Invite</a>    
                         {/if}

@@ -34,7 +34,7 @@ body {
     z-index: 1000;
     opacity: 0;
     background: rgba(255,255,255,0.8);
-    transition: all 0.3s;
+    /*transition: all 0.3s;*/
 }
  
 .md-show ~ .md-overlay {

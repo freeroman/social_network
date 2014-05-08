@@ -1,3 +1,55 @@
-{* Latte template *}
 
 {block content}
+
+
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="caption">
+                    <h4>Event name</h4>
+                    <p>{$event->name}</p>
+                    {if $event->id_employees==$user->getId()}
+                        <p><button class="btn btn-default show-md">Invite employees</button></p>
+                    {else}
+                        <h4>Admin</h4>
+                        <p><a n:href="Homepage:detail, $event->id_employees">{$event->first_name} {$event->surname}</a></p>
+                    {/if}
+                </div>
+            </div>
+            <div class="row">
+                <h4>Going</h4>
+                <div n:foreach="$going as $member" class="col-md-12">
+                    <a n:href="Homepage:detail, $member->id_employees"><span class="glyphicon glyphicon-user"></span> {$member->first_name} {$member->surname}</a>
+                </div>
+                <h4>Not going</h4>
+                <div n:foreach="$notGoing as $member" class="col-md-12">
+                    <a n:href="Homepage:detail, $member->id_employees"><span class="glyphicon glyphicon-user"></span> {$member->first_name} {$member->surname}</a>
+                </div>                
+                <h4>Invited</h4>
+                <div n:foreach="$invited as $member" class="col-md-12">
+                    <a n:href="Homepage:detail, $member->id_employees"><span class="glyphicon glyphicon-user"></span> {$member->first_name} {$member->surname}</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            {control newMessage}
+            <div class="row">
+                {foreach $messages as $msg}
+                <div class="panel panel-default">
+                    <div class="panel-body">{$msg->text}</div>
+                    <div class="panel-footer">{$msg->created_dt|date:'d. M H:i'}</div>
+                    <div class="panel-footer"><a n:href="Homepage:detail, $msg->id_employees">{$msg->first_name} {$msg->surname}</a></div>
+                </div>
+                {/foreach}
+                {if !$messages}
+                    <blockquote>
+                        <h2 n:if="!$iterations">There are not any messages yet!</h2>
+                    </blockquote>
+                {/if}
+            </div>
+        </div>
+    </div>
+    <div class="md-modal">
+        {control friendList}
+    </div>
+    <div class="md-overlay"></div>

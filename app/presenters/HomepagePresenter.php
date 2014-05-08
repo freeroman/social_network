@@ -24,6 +24,7 @@ class HomepagePresenter extends SecurePresenter
     public function renderDefault()
     {
         $this->template->messages = $this->context->messages->getFriendsMessages($this->user->getId());
+        $this->template->events = $this->context->events->getFeedEvents($this->user->getId());
     }
     
     public function createComponentNewMessage()
@@ -36,7 +37,6 @@ class HomepagePresenter extends SecurePresenter
         //$this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
         $this->template->friends = $this->context->employees->getFriendsByKeyword($keyword, $this->user->getId());
         $this->template->groups = $this->context->employees->getGroupsByKeyword($keyword);
-        //\Nette\Diagnostics\Debugger::dump($this->template->friends);
     }
 
     public function actionAddFriend($id) {

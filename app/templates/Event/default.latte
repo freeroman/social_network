@@ -1,0 +1,9 @@
+{* Latte template *}
+
+{block content}
+
+<div n:foreach="$events as $event" class="jumbotron">
+    <h3><a n:href="Event:detail, $event->id_events">{$event->name}</a></h3>
+    {*<p>{$group->text}</p>
+    <small>Last activity at: {$group->created_dt}</small>*}
+</div>

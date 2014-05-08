@@ -11,13 +11,21 @@
         {/foreach}
     </div>
     <div class="col-md-4">
-        <h3>Recent files</h3>
-        {foreach $messages as $msg}
+        <h3>Upcoming events</h3>
+        {foreach $events as $event}
         <div class="panel panel-default">
-            <div class="panel-body">{$msg->text}</div>
-            <div class="panel-footer">{$msg->created_dt|date:'d. M H:i'}</div>
-            <div class="panel-footer"><a n:href="Homepage:detail, $msg->id_employees">{$msg->first_name} {$msg->surname}</a></div>
+            <div class="panel-body"><a n:href="Event:detail, $event->id_events"><h4>{$event->name}</h4></a>
+                {if $event->description}<hr><p>Description: {$event->description}</p><hr>{/if}            
+                {if $event->place}<p>Place: {$event->place}</p>{/if}
+            </div>
+            <div class="panel-footer">Starting at {$event->starting_dt|date:'d. M'}</div>
+            <div n:if="$event->ending_dt" class="panel-footer">Ending at {$event->ending_dt|date:'d. M'}</div>
         </div>
         {/foreach}
+        {if !$events}
+            <blockquote>
+                <h2 n:if="!$iterations">There are not any upcoming events!</h2>
+            </blockquote>
+        {/if}
     </div>
 </div>

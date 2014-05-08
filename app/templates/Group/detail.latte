@@ -1,20 +1,3 @@
-{* Latte template *}
-{*
-{block content}
-
-<div class="jumbotron">
-    <h3>{$group->name}</h3>
-    <h4>Admin: <a n:href="Homepage:detail, $group->id_employees">{$group->first_name} {$group->surname}</a></h4>
-    <a n:href="Group:add, $group->id_groups">Add employees to this group</a>
-    {control newMessage}
-</div>
-
-<div n:foreach="$messages as $msg" class="jumbotron">
-    <p>{$msg->text}</p>
-    <small>{$msg->created_dt}</small>
-    <a n:href="Homepage:detail, $msg->id_employees">{$msg->first_name} {$msg->surname}</a>    
-</div>*}
-
 
 {block content}
 
@@ -26,7 +9,7 @@
                     <h4>Group name</h4>
                     <p>{$group->name}</p>
                     {if $group->id_employees==$user->getId()}
-                        <p><a class="btn btn-default" n:href="Group:add, $group->id_groups">Add new members »</a></p>
+                        <p><button class="btn btn-default show-md">Add new members</button></p>
                     {else}
                         <h4>Admin</h4>
                         <p><a n:href="Homepage:detail, $group->id_employees">{$group->first_name} {$group->surname}</a></p>
@@ -58,3 +41,7 @@
             </div>
         </div>
     </div>
+    <div class="md-modal">
+        {control friendList}
+    </div>
+    <div class="md-overlay"></div>

@@ -12,7 +12,7 @@ class GroupPresenter extends SecurePresenter{
     
     private $wall;
     
-    public function actionAdd($id)
+    public function actionDetail($id)
     {
         $this->id_groups = $id;
     }
@@ -23,8 +23,10 @@ class GroupPresenter extends SecurePresenter{
     
     public function renderDetail($id) {
         $group = $this->context->employees->getGroupById($id);
+        Nette\Diagnostics\Debugger::dump($group);
         $this->template->group = $group;
         $this->wall = $group->id_walls;
+        //$this->id_groups = $group->id_groups;
         $this->template->messages = $this->context->messages->getMessagesByGroupId($id);
         $this->template->members = $this->context->employees->getGroupMembers($id);
     }

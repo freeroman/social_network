@@ -8,29 +8,32 @@ use Nette,
 class EventPresenter extends SecurePresenter{
     
     //private $detailId;
-    private $id_groups=null;
+    private $id_events=null;
     
     private $wall;
     
-    public function actionAdd($id)
+    public function actionDetail($id)
     {
-        $this->id_groups = $id;
+        $this->id_events = $id;
     }
     
     public function renderDefault() {
-        $this->template->groups = $this->context->employees->getGroupsWithNewestMessage($this->user->getId());
+        $this->template->events = $this->context->events->getEvents($this->user->getId());
     }
     
     public function renderDetail($id) {
-        $group = $this->context->employees->getGroupById($id, FALSE);
-        $this->template->group = $group;
-        $this->wall = $group->id_walls;
-        $this->template->messages = $this->context->messages->getMessagesByGroupId($id);
+        $event = $this->context->events->getEvent($id);
+        $this->template->event = $event;
+        $this->wall = $event->id_walls;
+        $this->template->messages = $this->context->messages->getMessagesByWall($event->id_walls);
+        $this->template->going = $this->context->events->getEventsParticipants($id, TRUE);
+        $this->template->notGoing = $this->context->events->getEventsParticipants($id, FALSE);
+        $this->template->invited = $this->context->events->getEventsParticipants($id);
     }
     
     protected function createComponentFriendList()
     {
-        $list = new \FriendList($this->context->employees, $this->id_groups);
+        $list = new \FriendList($this->context->events, $this->id_events, TRUE);
         return $list;       
     }
     
@@ -51,10 +54,14 @@ class EventPresenter extends SecurePresenter{
                 ->setAttribute('class', 'form-control');
         $form->addTextArea('description', 'Description')
                 ->setAttribute('class', 'form-control');
+        $form->addText('starting_dt', 'Starting')
+                ->setAttribute('class', 'form-control');
+        $form->addText('ending_dt', 'Ending')
+                ->setAttribute('class', 'form-control');
         $form->setCurrentGroup(NULL);
-        $form->getElementPrototype()->class('form-horizontal');
         $form->addSubmit('send', 'Vytvořit')
                 ->setAttribute('class', 'btn btn-default');
+        $form->getElementPrototype()->class('form-horizontal');
         
         $renderer = $form->getRenderer();
         $renderer->wrappers['controls']['container'] = 'div class=col-md-6';
@@ -82,7 +89,8 @@ class EventPresenter extends SecurePresenter{
             'place' => !empty($values['place']) ? $values['place'] : null,
             'description' => !empty($values['description']) ? $values['description'] : null,
             'created_dt' => date('Y-m-d H-i-s'),
-            'starting_dt' => date('Y-m-d H-i-s')
+            'starting_dt' => $values['starting_dt'],
+            'ending_dt' => !empty($values['ending_dt']) ? $values['ending_dt'] : null
         );
         $id = $this->context->events->insertEvent($event);
         $this->redirect('Event:detail', $id);

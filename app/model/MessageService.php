@@ -42,6 +42,12 @@ class MessageService{
                 ->fetchAll();
     }
     
+    public function getMessagesByWall($id){
+        return $this->db->select('*')
+                ->from(CST::TABLE_MESSAGES)
+                ->where('id_walls=%i', $id)->fetchAll(null, 10);
+    }
+    
     public function getFriendsMessages($id) {
         return $this->db->query('SELECT e.*, m.* FROM relationships
             LEFT JOIN employees e ON id_employees=id_employees2
