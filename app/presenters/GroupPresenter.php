@@ -23,7 +23,6 @@ class GroupPresenter extends SecurePresenter{
     
     public function renderDetail($id) {
         $group = $this->context->employees->getGroupById($id);
-        Nette\Diagnostics\Debugger::dump($group);
         $this->template->group = $group;
         $this->wall = $group->id_walls;
         //$this->id_groups = $group->id_groups;
