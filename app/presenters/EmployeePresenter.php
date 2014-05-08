@@ -16,14 +16,14 @@ class EmployeePresenter extends SecurePresenter {
     {
         $form = new Nette\Application\UI\Form();
         $form->addGroup('User information');
-        $form->addText('first_name', 'First name')
-                ->setRequired('Jmeno je povinné')
+        $form->addText('first_name', 'First name*')
+                ->setRequired('Name is mandatory')
                 ->setAttribute('class', 'form-control');
-        $form->addText('surname', 'Surname')
-                ->setRequired('Přijmení je povinné')
+        $form->addText('surname', 'Surname*')
+                ->setRequired('Surname is mandatory')
                 ->setAttribute('class', 'form-control');
-        $form->addText('job_title', 'Job title')
-                ->setRequired('Přezdívka je povinná')
+        $form->addText('job_title', 'Job title*')
+                ->setRequired('Job title is mandatory')
                 ->setAttribute('class', 'form-control');
         //$form->addDateTimePicker('datum_narozeni', 'Datum narozeni:', 16, 16);
         $form->setCurrentGroup(NULL);
@@ -33,50 +33,20 @@ class EmployeePresenter extends SecurePresenter {
 
         $form->addGroup('Account info')
                 ->setOption('container', 'fieldset id=adress');
-        $form->addText('login', 'Login')
-                ->setRequired('Přezdívka je povinná')
+        $form->addText('login', 'Login*')
+                ->setRequired('Login is mandatory')
                 ->setAttribute('class', 'form-control');
-        $form->addText('password', 'Password')
-                ->setRequired('Přezdívka je povinná')
+        $form->addText('password', 'Password*')
+                ->setRequired('Password is mandatory')
                 ->setAttribute('class', 'form-control');            
-        $form->addText('role', 'Role')
-                ->setRequired('Přezdívka je povinná')
+        $form->addText('role', 'Role*')
+                ->setRequired('Role is mandatory')
                 ->setAttribute('class', 'form-control');
         $form->addUpload('avatar', 'Portrait')
                 ->addRule(\Nette\Application\UI\Form::IMAGE, 'File has to be image');
                 //->addRule(\Nette\Application\UI\Form::MAX_FILE_SIZE, 'File is too large (maximum 64 kB).', 64 * 1024 /* v bytech */);
-
-        //$form->getElementPrototype()->class('div class=col-md-4');
-        /*
-        $options = array(
-            'noAdress' => 'bez adresy',
-            'newAdress' => 's adresou',
-            'pickAdress' => 'vybrat z existujicich',
-        );
-        $form->addRadioList('adressRadioList','', $options)
-                ->setDefaultValue('noAdress')
-                ->getSeparatorPrototype()->setName(NULL);
-        //$form->addCheckbox('adressChb', 'Adresa');
-              //  ->setAttribute('id', 'adressChb');
-
-        $form->addGroup('Adresa')
-
-        $adresses = $this->context->persons->getAdressPairs();            
-        $form->addSelect('adresSelect', 'Adresy', $adresses);
-
-        $form->addText('mesto', 'Město');
-        $form->addText('ulice', 'Ulice');
-        $form->addText('cislo_domu', 'Číslo domu')
-                ->addCondition(Nette\Application\UI\Form::FILLED)
-                    ->addRule(Nette\Application\UI\Form::INTEGER, 'Číslo domu musí být číslo');                    
-        $form->addText('psc', 'PSČ')
-                ->addCondition(Nette\Application\UI\Form::FILLED)
-                    ->addRule(Nette\Application\UI\Form::INTEGER, 'PSČ musí být číslo')
-                    ->addRule(Nette\Application\UI\Form::MAX_LENGTH, 'PSČ může být dlouhé max 5 číslic', 5);
-        $form->setCurrentGroup(NULL);*/
-        $form->addSubmit('send', 'Vytvořit')
+        $form->addSubmit('send', 'Create')
             ->setAttribute('class', 'btn btn-default');
-        //$form->addCheckbox('save_adress', 'Adresa');*/
 
         $renderer = $form->getRenderer();
         $renderer->wrappers['controls']['container'] = 'div class=col-md-4';
@@ -147,7 +117,7 @@ class EmployeePresenter extends SecurePresenter {
     public function validateEmployeeForm($form){
         $values = $form->getValues();
         if ($this->context->employees->loginExists($values['login'])){
-            $form->addError('login existuje');
+            $form->addError('Login already exists.');
         }
     }
 }

@@ -5,7 +5,7 @@ namespace App\Presenters;
 use Nette,
 	App\Model;
 
-class GroupPresenter extends SecurePresenter{
+class EventPresenter extends SecurePresenter{
     
     //private $detailId;
     private $id_groups=null;
@@ -22,11 +22,10 @@ class GroupPresenter extends SecurePresenter{
     }
     
     public function renderDetail($id) {
-        $group = $this->context->employees->getGroupById($id);
+        $group = $this->context->employees->getGroupById($id, FALSE);
         $this->template->group = $group;
         $this->wall = $group->id_walls;
         $this->template->messages = $this->context->messages->getMessagesByGroupId($id);
-        $this->template->members = $this->context->employees->getGroupMembers($id);
     }
     
     protected function createComponentFriendList()
@@ -41,22 +40,24 @@ class GroupPresenter extends SecurePresenter{
         return $list;
     }
     
-    protected function createComponentNewGroup()
+    protected function createComponentNewEvent()
     {
         $form = new Nette\Application\UI\Form();
-        $form->addGroup('New group');
+        $form->addGroup('New event');
         $form->addText('name', 'Name')
                 ->setRequired('Name can not be empty')
                 ->setAttribute('class', 'form-control');
+        $form->addText('place', 'Place')
+                ->setAttribute('class', 'form-control');
+        $form->addTextArea('description', 'Description')
+                ->setAttribute('class', 'form-control');
         $form->setCurrentGroup(NULL);
-              //  ->setOption('container', 'fieldset id=adress');
-        //$form->setCurrentGroup(NULL);
         $form->getElementPrototype()->class('form-horizontal');
         $form->addSubmit('send', 'Vytvořit')
                 ->setAttribute('class', 'btn btn-default');
         
         $renderer = $form->getRenderer();
-        $renderer->wrappers['controls']['container'] = null;
+        $renderer->wrappers['controls']['container'] = 'div class=col-md-6';
         //$renderer->wrappers['pair']['container'] = 'div class=form-group';
         $renderer->wrappers['pair']['.error'] = 'has-error';
         $renderer->wrappers['control']['container'] = 'div class=form-group';
@@ -68,18 +69,22 @@ class GroupPresenter extends SecurePresenter{
 
         //$form->onValidate[] = callback($this, 'validateEmployeeForm');
 
-        $form->onSuccess[] =  callback($this, 'processNewEmployeeForm');
+        $form->onSuccess[] =  callback($this, 'processNewEventForm');
         return $form;
     }
     
-    public function processNewEmployeeForm($form) {
+    public function processNewEventForm($form) {
         $values = $form->getValues();
-        $group = array(
+        $event = array(
             'name' => $values['name'],
             'id_employees' => $this->user->getId(),
-            'id_walls' => $this->context->employees->newWall()
+            'id_walls' => $this->context->employees->newWall(),
+            'place' => !empty($values['place']) ? $values['place'] : null,
+            'description' => !empty($values['description']) ? $values['description'] : null,
+            'created_dt' => date('Y-m-d H-i-s'),
+            'starting_dt' => date('Y-m-d H-i-s')
         );
-        $id = $this->context->employees->insertGroup($group);
-        $this->redirect('Group:detail', $id);
+        $id = $this->context->events->insertEvent($event);
+        $this->redirect('Event:detail', $id);
     }
 }

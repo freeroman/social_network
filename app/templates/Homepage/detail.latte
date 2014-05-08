@@ -47,12 +47,20 @@
         <div class="col-md-8">
             {control newMessage}
             <div class="row">
+                {*
                 {foreach $msgs as $msg}
                 <blockquote>
                     <h4>{$msg->text}</h4>
-                    <footer>{$msg->created_dt}</footer>
-                    {*<small>bla{$msg->created_dt|date:'%e.%B %H:%M'}</small>*}
+                    <footer>{$msg->created_dt|date:'d. M H:i'}</footer>
                 </blockquote>
+                {/foreach}
+                *}
+                {foreach $msgs as $msg}
+                <div class="panel panel-default">
+                    <div class="panel-body">{$msg->text}</div>
+                    <div class="panel-footer">{$msg->created_dt|date:'d. M H:i'}</div>
+                    <div class="panel-footer"><a n:href="Homepage:detail, $msg->id_employees">{$msg->first_name} {$msg->surname}</a></div>
+                </div>
                 {/foreach}
                 {if !$msgs}
                     <blockquote>

@@ -4,17 +4,20 @@ class FriendList extends \Nette\Application\UI\Control
 {
         
     /** @var TicketService */
-    private $employeeService;
+    private $service;
     
-    private $id_group;
+    private $id;
+    
+    private $event;
     
     /** @persistent */
     public $keyword;
             
-    public function __construct(EmployeeService $service, $id)
+    public function __construct($service, $id, $event = false)
     {
-        $this->employeeService = $service;
-        $this->id_group = $id;
+        $this->service = $service;
+        $this->id = $id;
+        $this->event = $event;
     }
     
     public function render()
@@ -22,8 +25,12 @@ class FriendList extends \Nette\Application\UI\Control
         $template = $this->template;
         $template->setFile(__DIR__ . '/list.latte');
         
-        $template->friends = $this->employeeService->getEmployeesByKeywordWithGroup($this->keyword,$this->id_group);
-
+        if($this->event){
+            $template->employees = $this->service->getEmployeesByKeywordWithEvent($this->keyword,$this->id);            
+        } else {
+            $template->employees = $this->service->getEmployeesByKeywordWithGroup($this->keyword,$this->id);
+        }
+        
         $template->render();
     }
     
@@ -33,13 +40,21 @@ class FriendList extends \Nette\Application\UI\Control
     }
     
     public function handleAssign($id)
-    {        
-        $data = array(
-            'id_employees' => $id,
-            'id_groups' => $this->id_group
-        );
-        
-        $this->employeeService->addToGroup($data);
+    {
+        if($this->event){
+            $data = array(
+                'id_employees' => $id,
+                'id_events' => $this->id,
+                'created_dt' => date('Y-m-d H-i-s')
+            );
+            $this->service->addToEvent($data);
+        } else {
+            $data = array(
+                'id_employees' => $id,
+                'id_groups' => $this->id
+            );
+            $this->service->addToGroup($data);
+        }
         
         $this->redrawControl();
     }

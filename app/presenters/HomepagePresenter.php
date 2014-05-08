@@ -19,7 +19,7 @@ class HomepagePresenter extends SecurePresenter
         $this->emp = $emp;
         $this->template->emp = $emp;
         $this->template->friends = $this->context->employees->getFriendsById($id);
-        $this->template->groups = $this->context->employees->getGroupById($id, TRUE);
+        $this->template->groups = $this->context->employees->getGroupsById($id, TRUE);
     }
     public function renderDefault()
     {

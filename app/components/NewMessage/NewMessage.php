@@ -39,7 +39,7 @@ class NewMessage extends \Nette\Application\UI\Control
                 ->setRequired('Text of message can\'t be empty.')
                 ->setAttribute('class', 'form-control');
 
-        $form->addSubmit('send', 'Vytvořit')
+        $form->addSubmit('send', 'Post')
                 ->setAttribute('class', 'btn btn-default');
 
         $renderer = $form->getRenderer();

@@ -1,22 +1,22 @@
 {snippet}
     {control searchEmp}
-    {if !empty($friends)}
-        <table class="table table-striped">
+    {if !empty($employees)}
+        <table class="table">
             <tr>
                 <th>First name</th>
                 <th>Surname</th>
                 <th>Invited</th>
             </tr>        
-            {foreach $friends as $friend}
+            {foreach $employees as $emp}
                 <tr>
-                    <td><a class="ajax" n:href="detail!, $friend->id_employees">{$friend->first_name}</a></td>
-                    <td>{$friend->surname}</td>
+                    <td><a class="ajax" n:href="detail!, $emp->id_employees">{$emp->first_name}</a></td>
+                    <td>{$emp->surname}</td>
                     {*<td class="{$ticket->status|statusColor}">{$ticket->status|status}</td>*}
                     <td>
-                        {if !empty($friend->id_groups)}
+                        {if !empty($emp->id_groups)}
                             Already in there    
                         {else}
-                            <a class="ajax" n:href="assign!, $friend->id_employees">Invite</a>    
+                            <a class="ajax" n:href="assign!, $emp->id_employees">Invite</a>    
                         {/if}
                     </td>
                 </tr>
@@ -25,5 +25,4 @@
     {else}
         <p>Employee not found.</p>    
     {/if}
-
 {/snippet}

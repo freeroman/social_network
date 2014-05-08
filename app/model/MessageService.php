@@ -9,12 +9,21 @@ class MessageService{
     }
     
     public function getMessagesByUserId($id) {
-        //return $this->db->select('text, created_dt')->from(CST::TABLE_MESSAGES)->where('id_walls=', $id)->fetchAll(); 
+        //return $this->db->select('text, created_dt')->from(CST::TABLE_MESSAGES)->where('id_walls=', $id)->fetchAll();
+        return $this->db->select('m.*, ee.*')
+                ->from(CST::TABLE_MESSAGES)->as('m')
+                ->leftJoin(CST::TABLE_EMPLOYEES)->as('ew')
+                ->on('m.id_walls=ew.id_walls')
+                ->leftJoin(CST::TABLE_EMPLOYEES)->as('ee')
+                ->on('m.id_employees=ee.id_employees')
+                ->where('ew.id_employees=%i',$id)
+                ->orderBy('created_dt desc')->fetchAll(null, 10);
+        /*
         return $this->db->query('SELECT * '
                 . 'FROM ', CST::TABLE_EMPLOYEES, ' '
                 . 'INNER JOIN ', CST::TABLE_MESSAGES, ' '
                 . 'USING(id_walls) '
-                . 'WHERE ', CST::TABLE_EMPLOYEES.'.id_employees=', $id, 'ORDER BY created_dt desc')->fetchAll();
+                . 'WHERE ', CST::TABLE_EMPLOYEES.'.id_employees=', $id, 'ORDER BY created_dt desc')->fetchAll();*/
     }
     
     public function insertMessage($data) {
@@ -29,6 +38,7 @@ class MessageService{
                 ->leftJoin(CST::TABLE_EMPLOYEES)->as('e')
                 ->on('m.id_employees=e.id_employees')
                 ->where('g.id_groups=%i', $id)
+                ->orderBy('created_dt desc')
                 ->fetchAll();
     }
     

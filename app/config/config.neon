@@ -35,3 +35,4 @@ services:
 	authorizator: App\Model\UserManager(@db.connection)
 	messages: MessageService(@db.connection)
 	employees: EmployeeService(@db.connection)
+	events: EventService(@db.connection)

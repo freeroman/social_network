@@ -64,16 +64,25 @@ class EmployeeService
          */
     }
     
-    public function getGroupById($id, $employee=FALSE) {
-        $sql = $this->database->select('e.id_employees, e.first_name, e.surname, g.*')
+    public function getGroupById($id) {
+        return $this->database->select('e.id_employees, e.first_name, e.surname, g.*')
                 ->from(CST::TABLE_GROUPS)->as('g')
                 ->leftJoin(CST::TABLE_EMPLOYEES)->as('e')
-                ->using('(id_employees)');
-        if($employee){            
-            return $sql->where('e.id_employees=', $id)->fetchAll();
-        } else {
-            return $sql->where('id_groups=', $id)->fetch(); 
-        }
+                ->using('(id_employees)')
+                ->where('id_groups=', $id)->fetch();
+    }
+    
+    public function getGroupsById($id) {
+        return $this->database->select('g.*')
+                ->from(CST::TABLE_GROUPS_EMPLOYEES)->as('ge')
+                ->leftJoin(CST::TABLE_GROUPS)->as('g')
+                ->using('(id_groups)')
+                ->where('ge.id_employees=%i', $id)
+                ->union(
+                    $this->database->select('*')
+                    ->from(CST::TABLE_GROUPS)
+                    ->where('id_employees=%i', $id)
+                )->fetchAll(null, 15);
     }
     
     public function addFriend($data) {
@@ -113,6 +122,15 @@ class EmployeeService
                     SELECT * FROM groups_employees WHERE id_groups=',$id,'
             ) g USING (id_employees)
             WHERE (first_name LIKE %~like~', $keyword, ' OR surname LIKE %~like~', $keyword,')')->fetchAll();
+    }
+    
+    public function getGroupMembers($id) {
+        return $this->database->select('*')
+                ->from(CST::TABLE_GROUPS_EMPLOYEES)
+                ->leftJoin(CST::TABLE_EMPLOYEES)
+                ->using('(id_employees)')
+                ->where('id_groups=%i', $id)
+                ->fetchAll(null, 15);
     }
     
     public function getGroupsWithNewestMessage($id) {
