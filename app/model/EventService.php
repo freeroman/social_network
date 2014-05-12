@@ -55,6 +55,8 @@ class EventService{
     public function getEvent($id) {
         return $this->database->select('*')
                 ->from(CST::TABLE_EVENTS)
+                ->leftJoin(CST::TABLE_EMPLOYEES)
+                ->using('(id_employees)')
                 ->where('id_events=%i', $id)->fetch();
     }
     
@@ -66,5 +68,9 @@ class EventService{
                 ->where('ee.id_employees=%i', $id,' AND starting_dt >= NOW()')
                 ->orderBy('starting_dt')
                 ->fetchAll(NULL, 10);
+    }
+    
+    public function getEventsByKeyword($keyword){
+        return $this->database->select('*')->from(CST::TABLE_EVENTS)->where('name LIKE %~like~', $keyword, 'OR place LIKE %~like~', $keyword)->fetchAll(null, 6);
     }
 }

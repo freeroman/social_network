@@ -45,7 +45,9 @@ class MessageService{
     public function getMessagesByWall($id){
         return $this->db->select('*')
                 ->from(CST::TABLE_MESSAGES)
-                ->where('id_walls=%i', $id)->fetchAll(null, 10);
+                ->leftJoin(CST::TABLE_EMPLOYEES)
+                ->using('(id_employees)')
+                ->where(CST::TABLE_MESSAGES.'.id_walls=%i', $id)->fetchAll(null, 10);
     }
     
     public function getFriendsMessages($id) {

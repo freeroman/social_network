@@ -37,6 +37,7 @@ class HomepagePresenter extends SecurePresenter
         //$this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
         $this->template->friends = $this->context->employees->getFriendsByKeyword($keyword, $this->user->getId());
         $this->template->groups = $this->context->employees->getGroupsByKeyword($keyword);
+        $this->template->events = $this->context->events->getEventsByKeyword($keyword);
     }
 
     public function actionAddFriend($id) {
