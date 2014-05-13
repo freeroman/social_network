@@ -59,7 +59,7 @@ class MessageService{
             SELECT e.*, m.* FROM relationships
             LEFT JOIN employees e ON id_employees=id_employees1
             INNER JOIN messages m USING(id_employees)
-            WHERE id_employees2=',$id,'AND accepted=',1)->fetchAll(null, 10);
+            WHERE id_employees2=',$id,'AND accepted=',1, 'ORDER BY created_dt desc')->fetchAll(null, 10);
     }
     
 }

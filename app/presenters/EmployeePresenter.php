@@ -36,7 +36,7 @@ class EmployeePresenter extends SecurePresenter {
         $form->addText('login', 'Login*')
                 ->setRequired('Login is mandatory')
                 ->setAttribute('class', 'form-control');
-        $form->addText('password', 'Password*')
+        $form->addPassword('password', 'Password*')
                 ->setRequired('Password is mandatory')
                 ->setAttribute('class', 'form-control');            
         $form->addText('role', 'Role*')
