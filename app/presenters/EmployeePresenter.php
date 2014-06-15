@@ -38,12 +38,15 @@ class EmployeePresenter extends SecurePresenter {
                 ->setAttribute('class', 'form-control');
         $form->addPassword('password', 'Password*')
                 ->setRequired('Password is mandatory')
-                ->setAttribute('class', 'form-control');            
+                ->setAttribute('class', 'form-control');   
+        $form->addPassword('password_check', 'Password check*')
+                ->setRequired('Password is mandatory')
+                ->setAttribute('class', 'form-control');          
         $form->addText('role', 'Role*')
                 ->setRequired('Role is mandatory')
                 ->setAttribute('class', 'form-control');
-        $form->addUpload('avatar', 'Portrait')
-                ->addRule(\Nette\Application\UI\Form::IMAGE, 'File has to be image');
+        $form->addUpload('avatar', 'Portrait');
+                //->addRule(\Nette\Application\UI\Form::IMAGE, 'File has to be image');
                 //->addRule(\Nette\Application\UI\Form::MAX_FILE_SIZE, 'File is too large (maximum 64 kB).', 64 * 1024 /* v bytech */);
         $form->addSubmit('send', 'Create')
             ->setAttribute('class', 'btn btn-default');
@@ -68,15 +71,16 @@ class EmployeePresenter extends SecurePresenter {
         
         $file = $form['avatar']->getValue();
         
-        $fileName = 'avatar_' . uniqid() . $file->name;
-        
-        if($file->isOk()){
-            $imgUrl = __DIR__ . '/../../www/images/portraits/'.$fileName;
-            $file->move($imgUrl);
-        } else {
-            $form->addError('Try reupload the picture.');
+        if($file->name){
+            $fileName = 'avatar_' . uniqid() . $file->name;
+            if($file->isOk()){
+                $imgUrl = __DIR__ . '/../../www/images/portraits/'.$fileName;
+                $file->move($imgUrl);
+            } else {
+                $form->addError('Try reupload the picture.');
+            }
         }
-
+        
         /*
         if ($id > 0) {
             $this->context->createAkce()->find($id)->update(array(
@@ -107,7 +111,7 @@ class EmployeePresenter extends SecurePresenter {
             'id_walls' => $this->context->employees->newWall(),
             'password' => \App\Model\Passwords::hash($values['password']),
             'role' => $values['role'],
-            'avatar' => $fileName
+            'avatar' => $file->name ? $fileName : null
         );
         $this->context->authorizator->add($employee);
         $this->flashMessage('You have succesfully added new employee.');
@@ -118,6 +122,9 @@ class EmployeePresenter extends SecurePresenter {
         $values = $form->getValues();
         if ($this->context->employees->loginExists($values['login'])){
             $form->addError('Login already exists.');
+        }
+        if ($values['password']!=$values['password_check']){
+            $form->addError('Passwords are different.');
         }
     }
 }

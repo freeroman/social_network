@@ -17,6 +17,7 @@ class NewMessage extends \Nette\Application\UI\Control
             
     public function __construct(MessageService $service, $emp, $wall)
     {
+        parent::__construct();
         $this->messageService = $service;
         $this->wall = $wall;
         $this->emp = $emp;
@@ -38,6 +39,8 @@ class NewMessage extends \Nette\Application\UI\Control
         $form->addTextArea('text', 'Message')
                 ->setRequired('Text of message can\'t be empty.')
                 ->setAttribute('class', 'form-control');
+        
+        $form->addUpload('file', 'File or image');
 
         $form->addSubmit('send', 'Post')
                 ->setAttribute('class', 'btn btn-default');
@@ -61,6 +64,7 @@ class NewMessage extends \Nette\Application\UI\Control
         
     public function processNewMessage($form){
         $values = $form->getValues();
+        
         $message = array(
             'id_walls' => $values['id_walls'],
             'id_employees' => $values['id_employees'],
@@ -70,7 +74,32 @@ class NewMessage extends \Nette\Application\UI\Control
             'visible_to' => '2999-12-31 23:59:59',
             'id_sharing_types' => '1'
         );
-        $this->messageService->insertMessage($message);
+        $messageId = $this->messageService->insertMessage($message);
+        
+        $file = $form['file']->getValue();
+        
+        if($file->name){
+            $fileName = uniqid() . $file->name;
+            if($file->isOk()){
+                $imgUrl = __DIR__ . '/../../../www/images/files/'.$fileName;
+                $file->move($imgUrl);
+                
+                $file = array(                    
+                    'file' => $file->name ? $fileName : null,
+                    'id_messages' => $messageId,
+                    'id_employees' => $values['id_employees'],
+                    'created_dt' => date('Y-m-d H-i-s'),
+                    'visible_from' => '1000-01-01 00:00:00',
+                    'visible_to' => '2999-12-31 23:59:59',
+                    'type' => 'I',
+                    'id_sharing_types' => '1'                    
+                );
+                $this->messageService->insertFile($file);
+            } else {
+                $form->addError('Try reupload the picture.');
+            }
+        }
+        
         $this->flashMessage('Message has been posted.', 'success');
         $this->redirect('this');
     }

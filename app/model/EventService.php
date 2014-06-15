@@ -53,9 +53,9 @@ class EventService{
     }
     
     public function getEvent($id) {
-        return $this->database->select('*')
-                ->from(CST::TABLE_EVENTS)
-                ->leftJoin(CST::TABLE_EMPLOYEES)
+        return $this->database->select('ev.*, emp.first_name, emp.surname, emp.id_employees')
+                ->from(CST::TABLE_EVENTS)->as('ev')
+                ->leftJoin(CST::TABLE_EMPLOYEES)->as('emp')
                 ->using('(id_employees)')
                 ->where('id_events=%i', $id)->fetch();
     }
