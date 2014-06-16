@@ -25,6 +25,8 @@ $(function() {
     });
     $( "#frm-newEvent-starting_dt" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
     $( "#frm-newEvent-ending_dt" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+    $( "#frm-employeeForm-birth_dt" ).datepicker();
+    $( "#frm-employeeForm-birth_dt" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 });
 
 $(document).ready(function(){

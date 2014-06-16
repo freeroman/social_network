@@ -22,6 +22,9 @@ class EmployeePresenter extends SecurePresenter {
         $form->addText('surname', 'Surname*')
                 ->setRequired('Surname is mandatory')
                 ->setAttribute('class', 'form-control');
+        $form->addText('birth_dt', 'Day of birth*')
+                ->setRequired('Day of birth is mandatory')
+                ->setAttribute('class', 'form-control');
         $form->addText('job_title', 'Job title*')
                 ->setRequired('Job title is mandatory')
                 ->setAttribute('class', 'form-control');
@@ -81,46 +84,53 @@ class EmployeePresenter extends SecurePresenter {
             }
         }
         
-        /*
-        if ($id > 0) {
-            $this->context->createAkce()->find($id)->update(array(
-                'datumOd' => $form->values->datumOd,
-                'datumDo' => $form->values->datumDo,
-                'popis' => $form->values->text,
-                'url' => '/images/upload/' . $file->name
-            ));
-
-            $this->flashMessage('Akce upravena.', 'success');
-        } else {
-            $this->context->createAkce()->insert(array(
-                'datumOd' => $form->values->datumOd,
-                'datumDo' => $form->values->datumDo,
-                'popis' => $form->values->text,
-                'url' => '/images/upload/' . $file->name
-            ));
-
-            $this->flashMessage('Upload zrušen.', 'success');
-        }*/
-        
         $employee = array(
             'login' => $values['login'],
             'first_name' => $values['first_name'],
             'surname' => $values['surname'],
-            'birth_dt' => date('Y-m-d'),
+            'birth_dt' => $values['birth_dt'],//date('Y-m-d'),
             'job_title' => $values['job_title'],
-            'id_walls' => $this->context->employees->newWall(),
             'password' => \App\Model\Passwords::hash($values['password']),
-            'role' => $values['role'],
-            'avatar' => $file->name ? $fileName : null
+            'role' => $values['role']
         );
-        $this->context->authorizator->add($employee);
-        $this->flashMessage('You have succesfully added new employee.');
+        
+        if(array_key_exists('id_employees', $values)){
+            $employee['id_employees']=$values['id_employees'];
+            if($file->name){
+                $employee['avatar']=$fileName;
+            }
+            $this->context->employees->editEmployee($employee);
+            $this->flashMessage('You have succesfully edited employee information.');  
+            $this->redirect('Homepage:detail', $values['id_employees']);
+        } else {
+            $employee['avatar'] = $file->name ? $fileName : null;
+            $employee['id_walls'] = $this->context->employees->newWall();
+            $this->context->authorizator->add($employee);
+            $this->flashMessage('You have succesfully added new employee.');            
+        }
         $this->redirect('employee:');
+    }
+    
+    public function actionEditEmployee($id) {        
+        $form = $this['employeeForm'];
+
+        $employee = $this->context->employees->getEmployeeById($id);
+
+        $form->setDefaults($employee);
+        $form->setDefaults(array('birth_dt'=> $employee->birth_dt->format('Y-m-d')));
+
+        if (!$employee) { // kontrola existence záznamu
+            throw new BadRequestException;
+        }
+        $form->addHidden('id_employees', $id);
+
+        $form['send']->caption = 'Save changes';
+        $this->template->form = $form;        
     }
 
     public function validateEmployeeForm($form){
         $values = $form->getValues();
-        if ($this->context->employees->loginExists($values['login'])){
+        if ($this->context->employees->loginExists($values['login']) && !array_key_exists('id_employees', $values)){
             $form->addError('Login already exists.');
         }
         if ($values['password']!=$values['password_check']){

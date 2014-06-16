@@ -18,6 +18,9 @@
                     <p>{$emp->surname}</p>
                     <h4>Job title</h4>
                     <p>{$emp->job_title}</p>
+                    {if $emp->id_employees==$user->getId()}
+                        <a n:href="Employee:editEmployee, $user->getId()">Edit</a>
+                    {/if}
                 </div>
             </div>
             <div class="row">

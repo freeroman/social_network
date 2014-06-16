@@ -64,6 +64,12 @@ class EmployeeService
          */
     }
     
+    public function editEmployee($data) {
+        $id = $data['id_employees'];
+        unset($data['id_employees']);
+        $this->database->update(CST::TABLE_EMPLOYEES, $data)->where('id_employees=%i', $id)->execute();
+    }
+    
     public function getGroupById($id) {
         return $this->database->select('e.id_employees, e.first_name, e.surname, g.*')
                 ->from(CST::TABLE_GROUPS)->as('g')
