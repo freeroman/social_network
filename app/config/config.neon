@@ -36,3 +36,4 @@ services:
 	messages: MessageService(@db.connection)
 	employees: EmployeeService(@db.connection)
 	events: EventService(@db.connection)
+	acl: AclModel()

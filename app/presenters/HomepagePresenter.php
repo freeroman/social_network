@@ -12,6 +12,10 @@ use Nette,
 class HomepagePresenter extends SecurePresenter
 {
     private $emp=null;
+    
+    /** @persistent */
+    public $keyword=null;
+    
     public function renderDetail($id)
     {
         $this->template->msgs = $this->context->messages->getMessagesByUserId($id);
@@ -34,6 +38,7 @@ class HomepagePresenter extends SecurePresenter
     }
         
     public function renderSearch($keyword) {
+        $this->keyword=$keyword;
         //$this->template->result = $this->context->employees->getEmployeesByKeyword($keyword);
         $this->template->friends = $this->context->employees->getFriendsByKeyword($keyword, $this->user->getId());
         $this->template->groups = $this->context->employees->getGroupsByKeyword($keyword);
@@ -49,7 +54,7 @@ class HomepagePresenter extends SecurePresenter
             'valid_to' => '2999-12-31 23:59:59',
         );
         $this->context->employees->addFriend($relationship);
-        $this->redirect('Homepage:search');
+        $this->redirect('Homepage:search', $this->keyword);
     }
 
     public function actionAcceptFriendship($id) {

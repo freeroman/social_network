@@ -10,7 +10,9 @@ class GroupPresenter extends SecurePresenter{
     //private $detailId;
     private $id_groups=null;
     
-    private $wall;
+    private $wall = null;
+    
+    private $group = null;
     
     public function actionDetail($id)
     {
@@ -23,7 +25,10 @@ class GroupPresenter extends SecurePresenter{
     
     public function renderDetail($id) {
         $group = $this->context->employees->getGroupById($id);
+        
+        $this->group = $group;
         $this->template->group = $group;
+        
         $this->wall = $group->id_walls;
         //$this->id_groups = $group->id_groups;
         $this->template->messages = $this->context->messages->getMessagesByGroupId($id);
@@ -40,6 +45,20 @@ class GroupPresenter extends SecurePresenter{
     {
         $list = new \NewMessage($this->context->messages, $this->user->getId(), $this->wall);
         return $list;
+    }
+    
+    public function handleAssign($id)
+    {
+        if($this->group['id_employees']===$this->user->getId()){
+            $data = array(
+                'id_employees' => $id,
+                'id_groups' => $this->id_groups
+            );
+            $this->context->employees->addToGroup($data);
+        } else {
+            $this->flashMessage('You are not an administrator of this group', 'warning');
+            $this->redirect('Group:detail', $this->id_groups);
+        }
     }
     
     protected function createComponentNewGroup()

@@ -127,7 +127,7 @@ class EmployeeService
             (
                     SELECT * FROM groups_employees WHERE id_groups=',$id,'
             ) g USING (id_employees)
-            WHERE (first_name LIKE %~like~', $keyword, ' OR surname LIKE %~like~', $keyword,')')->fetchAll();
+            WHERE (first_name LIKE %~like~', $keyword, ' OR surname LIKE %~like~', $keyword,')')->fetchAll(null, 10);
     }
     
     public function getGroupMembers($id) {

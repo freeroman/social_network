@@ -55,22 +55,28 @@
                         <li><a href="{link Event:add}">Create event</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">News <span n:if="$count" class="badge">{$count}</span> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                      <li class="dropdown-header">Friends</li>
-                      <li n:foreach="$requests as $request">
-                          <a n:href="Homepage:acceptFriendship, $request->id_relationships"><span class="glyphicon glyphicon-plus-sign"></span> {$request->first_name} {$request->surname}</a>
-                      </li>
-                      <li><a href="#">One more separated link</a></li>
-                      <li class="divider"></li>
-                    </ul>
-                </li>
-                <li {ifCurrent employee:}class="active"{/ifCurrent}><a href="{link employee:default}">Add employee</a></li>
-                {control search}
+                {if $count}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">News 
+                        <span class="badge">{$count}</span> <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                          <li class="dropdown-header">Friends</li>
+                          <li n:foreach="$requests as $request">
+                              <a n:href="Homepage:acceptFriendship, $request->id_relationships"><span class="glyphicon glyphicon-plus-sign"></span> {$request->first_name} {$request->surname}</a>
+                          </li>
+                          <li class="divider"></li>
+                        </ul>                     
+                    </li>
+                {else}
+                    <li><a href="#">News</a></li>                    
+                {/if}
+                {if $user->isInRole('administrator')}
+                    <li {ifCurrent employee:}class="active"{/ifCurrent}><a href="{link employee:default}">Add employee</a></li>
+                {/if}
                 
               </ul>
               <ul class="nav navbar-nav navbar-right">
+                {control search}
                   {if !$userLoggedIn}
                   <li {ifCurrent sign:in}class="active"{/ifCurrent}><a href="{link sign:in}">Sign in</a></li>
                   {else}

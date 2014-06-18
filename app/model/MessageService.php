@@ -18,7 +18,7 @@ class MessageService{
                 ->on('m.id_employees=ee.id_employees')
                 ->leftJoin(CST::TABLE_FILES)->as('f')
                 ->using('(id_messages)')
-                ->where('ew.id_employees=%i',$id)
+                ->where('ew.id_employees=%i',$id, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to')
                 ->orderBy('created_dt desc')->fetchAll(null, 10);
         /*
         return $this->db->query('SELECT * '
@@ -33,12 +33,20 @@ class MessageService{
         return $this->db->getInsertId();
     }
     
+    public function deleteMessage($id) {
+        $this->db->update(CST::TABLE_MESSAGES, array('visible_to'=>date('Y-m-d H-i-s')))->where('id_messages=%i', $id)->execute();
+    }
+    
+    public function reAssignFile($from, $to) {
+        $this->db->query('INSERT INTO files(file, id_employees, id_sharing_types, created_dt, id_albums, type, visible_from, visible_to, id_messages) SELECT file, id_employees, id_sharing_types, created_dt, id_albums, type, visible_from, visible_to, %i',$to,' FROM files WHERE id_messages=%i', $from);
+    }
+    
     public function insertFile($data) {
         $this->db->insert(CST::TABLE_FILES, $data)->execute();
     }
     
     public function getMessagesByGroupId($id){
-        return $this->db->select('*')
+        return $this->db->select('m.*, g.*, f.file, f.type, e.*')
                 ->from(CST::TABLE_MESSAGES)->as('m')
                 ->leftJoin(CST::TABLE_GROUPS)->as('g')
                 ->on('g.id_walls=m.id_walls')
@@ -46,9 +54,13 @@ class MessageService{
                 ->on('m.id_employees=e.id_employees')
                 ->leftJoin(CST::TABLE_FILES)->as('f')
                 ->on('m.id_messages=f.id_messages')
-                ->where('g.id_groups=%i', $id)
-                ->orderBy('created_dt desc')
+                ->where('g.id_groups=%i', $id, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to')
+                ->orderBy('m.created_dt desc')
                 ->fetchAll();
+    }
+    
+    public function getMessageById($id) {
+        return $this->db->select('*')->from(CST::TABLE_MESSAGES)->where('id_messages=%i', $id)->fetch();        
     }
     
     public function getMessagesByWall($id){
@@ -58,7 +70,8 @@ class MessageService{
                 ->using('(id_employees)')
                 ->leftJoin(CST::TABLE_FILES)
                 ->using('(id_messages)')
-                ->where(CST::TABLE_MESSAGES.'.id_walls=%i', $id)->fetchAll(null, 10);
+                ->where(CST::TABLE_MESSAGES.'.id_walls=%i', $id, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN visible_from AND visible_to')
+                ->fetchAll(null, 10);
     }
     
     public function getFriendsMessages($id) {
@@ -72,7 +85,8 @@ class MessageService{
             LEFT JOIN employees e ON id_employees=id_employees1
             INNER JOIN messages m USING(id_employees)
             LEFT JOIN files f USING (id_messages)
-            WHERE id_employees2=',$id,'AND accepted=',1, 'ORDER BY created_dt desc')->fetchAll(null, 10);
+            WHERE id_employees2=',$id,'AND accepted=',1, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to')
+                ->fetchAll(null, 10);
     }
     
 }

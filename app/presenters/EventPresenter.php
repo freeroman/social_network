@@ -10,7 +10,9 @@ class EventPresenter extends SecurePresenter{
     //private $detailId;
     private $id_events=null;
     
-    private $wall;
+    private $wall = null;
+    
+    private $event = null;
     
     public function actionDetail($id)
     {
@@ -23,7 +25,9 @@ class EventPresenter extends SecurePresenter{
     
     public function renderDetail($id) {
         $event = $this->context->events->getEvent($id);
+        $this->event = $event;
         $this->template->event = $event;
+        
         $this->wall = $event->id_walls;
         $this->template->messages = $this->context->messages->getMessagesByWall($event->id_walls);
         $this->template->going = $this->context->events->getEventsParticipants($id, TRUE);
@@ -94,5 +98,20 @@ class EventPresenter extends SecurePresenter{
         );
         $id = $this->context->events->insertEvent($event);
         $this->redirect('Event:detail', $id);
+    }
+    
+    public function handleAssign($id)
+    {
+        if($this->event['id_employees']===$this->user->getId()){
+            $data = array(
+                'id_employees' => $id,
+                'id_events' => $this->id,
+                'created_dt' => date('Y-m-d H-i-s')
+            );
+            $this->context->events->addToEvent($data);
+        } else {
+            $this->flashMessage('You are not an administrator of this event', 'warning');
+            $this->redirect('Event:detail', $this->id_events);
+        }
     }
 }

@@ -41,20 +41,7 @@ class FriendList extends \Nette\Application\UI\Control
     
     public function handleAssign($id)
     {
-        if($this->event){
-            $data = array(
-                'id_employees' => $id,
-                'id_events' => $this->id,
-                'created_dt' => date('Y-m-d H-i-s')
-            );
-            $this->service->addToEvent($data);
-        } else {
-            $data = array(
-                'id_employees' => $id,
-                'id_groups' => $this->id
-            );
-            $this->service->addToGroup($data);
-        }
+        $this->presenter->handleAssign($id);
         
         $this->redrawControl();
     }
