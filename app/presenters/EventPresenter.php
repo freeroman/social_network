@@ -12,8 +12,6 @@ class EventPresenter extends SecurePresenter{
     
     private $wall = null;
     
-    private $event = null;
-    
     public function actionDetail($id)
     {
         $this->id_events = $id;
@@ -25,7 +23,6 @@ class EventPresenter extends SecurePresenter{
     
     public function renderDetail($id) {
         $event = $this->context->events->getEvent($id);
-        $this->event = $event;
         $this->template->event = $event;
         
         $this->wall = $event->id_walls;
@@ -51,7 +48,7 @@ class EventPresenter extends SecurePresenter{
     {
         $form = new Nette\Application\UI\Form();
         $form->addGroup('New event');
-        $form->addText('name', 'Name')
+        $form->addText('name', 'Name*')
                 ->setRequired('Name can not be empty')
                 ->setAttribute('class', 'form-control');
         $form->addText('place', 'Place')
@@ -102,10 +99,11 @@ class EventPresenter extends SecurePresenter{
     
     public function handleAssign($id)
     {
-        if($this->event['id_employees']===$this->user->getId()){
+        $administrator = $this->context->events->getEvent($this->id_events)->id_employees;
+        if($administrator==$this->user->getId()){
             $data = array(
                 'id_employees' => $id,
-                'id_events' => $this->id,
+                'id_events' => $this->id_events,
                 'created_dt' => date('Y-m-d H-i-s')
             );
             $this->context->events->addToEvent($data);

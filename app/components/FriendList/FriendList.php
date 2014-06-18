@@ -2,8 +2,6 @@
 
 class FriendList extends \Nette\Application\UI\Control
 {
-        
-    /** @var TicketService */
     private $service;
     
     private $id;

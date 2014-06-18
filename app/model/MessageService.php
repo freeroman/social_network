@@ -64,13 +64,13 @@ class MessageService{
     }
     
     public function getMessagesByWall($id){
-        return $this->db->select('*')
-                ->from(CST::TABLE_MESSAGES)
-                ->leftJoin(CST::TABLE_EMPLOYEES)
+        return $this->db->select('m.*, f.file, f.type, e.*')
+                ->from(CST::TABLE_MESSAGES)->as('m')
+                ->leftJoin(CST::TABLE_EMPLOYEES)->as('e')
                 ->using('(id_employees)')
-                ->leftJoin(CST::TABLE_FILES)
+                ->leftJoin(CST::TABLE_FILES)->as('f')
                 ->using('(id_messages)')
-                ->where(CST::TABLE_MESSAGES.'.id_walls=%i', $id, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN visible_from AND visible_to')
+                ->where('m.id_walls=%i', $id, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to')
                 ->fetchAll(null, 10);
     }
     
@@ -85,7 +85,8 @@ class MessageService{
             LEFT JOIN employees e ON id_employees=id_employees1
             INNER JOIN messages m USING(id_employees)
             LEFT JOIN files f USING (id_messages)
-            WHERE id_employees2=',$id,'AND accepted=',1, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to')
+            WHERE id_employees2=',$id,'AND accepted=',1, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to
+            ORDER BY created_dt desc')
                 ->fetchAll(null, 10);
     }
     

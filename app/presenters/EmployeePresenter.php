@@ -69,63 +69,73 @@ class EmployeePresenter extends SecurePresenter {
         return $form;
     }
 
-    public function processEmployeeForm($form){        
-        $values = $form->getValues();
-        
-        $file = $form['avatar']->getValue();
-        
-        if($file->name){
-            $fileName = 'avatar_' . uniqid() . $file->name;
-            if($file->isOk()){
-                $imgUrl = __DIR__ . '/../../www/images/portraits/'.$fileName;
-                $file->move($imgUrl);
-            } else {
-                $form->addError('Try reupload the picture.');
-            }
-        }
-        
-        $employee = array(
-            'login' => $values['login'],
-            'first_name' => $values['first_name'],
-            'surname' => $values['surname'],
-            'birth_dt' => $values['birth_dt'],//date('Y-m-d'),
-            'job_title' => $values['job_title'],
-            'password' => \App\Model\Passwords::hash($values['password']),
-            'role' => $values['role']
-        );
-        
-        if(array_key_exists('id_employees', $values)){
-            $employee['id_employees']=$values['id_employees'];
+    public function processEmployeeForm($form){
+        if($id==$this->getUser()->getId() || $this->getUser()->isInRole('administrator')){
+            $values = $form->getValues();
+
+            $file = $form['avatar']->getValue();
+
             if($file->name){
-                $employee['avatar']=$fileName;
+                $fileName = 'avatar_' . uniqid() . $file->name;
+                if($file->isOk()){
+                    $imgUrl = __DIR__ . '/../../www/images/portraits/'.$fileName;
+                    $file->move($imgUrl);
+                } else {
+                    $form->addError('Try reupload the picture.');
+                }
             }
-            $this->context->employees->editEmployee($employee);
-            $this->flashMessage('You have succesfully edited employee information.');  
-            $this->redirect('Homepage:detail', $values['id_employees']);
+
+            $employee = array(
+                'login' => $values['login'],
+                'first_name' => $values['first_name'],
+                'surname' => $values['surname'],
+                'birth_dt' => $values['birth_dt'],//date('Y-m-d'),
+                'job_title' => $values['job_title'],
+                'password' => \App\Model\Passwords::hash($values['password']),
+                'role' => $values['role']
+            );
+
+            if(array_key_exists('id_employees', $values)){
+                $employee['id_employees']=$values['id_employees'];
+                if($file->name){
+                    $employee['avatar']=$fileName;
+                }
+                $this->context->employees->editEmployee($employee);
+                $this->flashMessage('You have succesfully edited employee information.');  
+                $this->redirect('Homepage:detail', $values['id_employees']);
+            } else {
+                $employee['avatar'] = $file->name ? $fileName : null;
+                $employee['id_walls'] = $this->context->employees->newWall();
+                $this->context->authorizator->add($employee);
+                $this->flashMessage('You have succesfully added new employee.');            
+            }
+            $this->redirect('employee:');
         } else {
-            $employee['avatar'] = $file->name ? $fileName : null;
-            $employee['id_walls'] = $this->context->employees->newWall();
-            $this->context->authorizator->add($employee);
-            $this->flashMessage('You have succesfully added new employee.');            
+            $this->flashMessage('You do not have permission to do this.', 'warning');
+            $this->redirect('Homepage:');
         }
-        $this->redirect('employee:');
     }
     
-    public function actionEditEmployee($id) {        
-        $form = $this['employeeForm'];
+    public function actionEditEmployee($id) {
+        if($id==$this->getUser()->getId() || $this->getUser()->isInRole('administrator')){
+            $form = $this['employeeForm'];
 
-        $employee = $this->context->employees->getEmployeeById($id);
+            $employee = $this->context->employees->getEmployeeById($id);
 
-        $form->setDefaults($employee);
-        $form->setDefaults(array('birth_dt'=> $employee->birth_dt->format('Y-m-d')));
+            $form->setDefaults($employee);
+            $form->setDefaults(array('birth_dt'=> $employee->birth_dt->format('Y-m-d')));
 
-        if (!$employee) { // kontrola existence záznamu
-            throw new BadRequestException;
+            if (!$employee) { // kontrola existence záznamu
+                throw new BadRequestException;
+            }
+            $form->addHidden('id_employees', $id);
+
+            $form['send']->caption = 'Save changes';
+            $this->template->form = $form;
+        } else {
+            $this->flashMessage('You do not have permission to do this.', 'warning');
+            $this->redirect('Homepage:');
         }
-        $form->addHidden('id_employees', $id);
-
-        $form['send']->caption = 'Save changes';
-        $this->template->form = $form;        
     }
 
     public function validateEmployeeForm($form){

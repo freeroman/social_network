@@ -7,8 +7,6 @@
  */
 class NewMessage extends \Nette\Application\UI\Control
 {
-        
-    /** @var TicketService */
     private $messageService;
     
     private $wall;
