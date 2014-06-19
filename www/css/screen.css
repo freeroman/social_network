@@ -78,6 +78,10 @@ a[href^="error:"] {
     max-width: 50px;
 }
 
+.feed-image{
+    max-height: 200px;
+}
+
 /*
 form th, form td {
 	vertical-align: top;

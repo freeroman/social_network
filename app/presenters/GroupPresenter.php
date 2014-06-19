@@ -35,6 +35,28 @@ class GroupPresenter extends SecurePresenter{
         $this->template->members = $this->context->employees->getGroupMembers($id);
     }
     
+    public function actionEdit($id) {
+        $group = $this->context->employees->getGroupById($id);
+        if($group->id_employees==$this->getUser()->getId() || $this->getUser()->isInRole('administrator')){
+            $form = $this['groupForm'];
+
+            $form->setDefaults($group);
+            //$form->setDefaults(array('birth_dt'=> $employee->birth_dt->format('Y-m-d')));
+
+            if (!$group) { // kontrola existence záznamu
+                throw new BadRequestException;
+            }
+            $form->addHidden('id_groups', $id);
+            $form->addHidden('id_employees', $group->id_employees);
+
+            $form['send']->caption = 'Save changes';
+            $this->template->form = $form;
+        } else {
+            $this->flashMessage('You are not an administrator of this group', 'warning');
+            $this->redirect('Group:detail', $id);
+        }
+    }
+    
     protected function createComponentFriendList()
     {
         $list = new \FriendList($this->context->employees, $this->id_groups);
@@ -61,10 +83,9 @@ class GroupPresenter extends SecurePresenter{
         }
     }
     
-    protected function createComponentNewGroup()
+    protected function createComponentGroupForm()
     {
         $form = new Nette\Application\UI\Form();
-        $form->addGroup('New group');
         $form->addText('name', 'Name')
                 ->setRequired('Name can not be empty')
                 ->setAttribute('class', 'form-control');
@@ -88,18 +109,25 @@ class GroupPresenter extends SecurePresenter{
 
         //$form->onValidate[] = callback($this, 'validateEmployeeForm');
 
-        $form->onSuccess[] =  callback($this, 'processNewEmployeeForm');
+        $form->onSuccess[] =  callback($this, 'processGroupForm');
         return $form;
     }
     
-    public function processNewEmployeeForm($form) {
+    public function processGroupForm($form) {
         $values = $form->getValues();
         $group = array(
-            'name' => $values['name'],
-            'id_employees' => $this->user->getId(),
-            'id_walls' => $this->context->employees->newWall()
+            'name' => $values['name']
         );
-        $id = $this->context->employees->insertGroup($group);
+        if(array_key_exists('id_groups', $values)){
+            $group['id_groups']=$values['id_groups'];
+            $group['id_employees']=$values['id_employees'];
+            $this->context->employees->editGroup($group);
+            $id = $group['id_groups'];
+        } else {
+            $group['id_walls']=$this->context->employees->newWall();
+            $group['id_employees']=$this->user->getId();
+            $id = $this->context->employees->insertGroup($group);
+        }
         $this->redirect('Group:detail', $id);
     }
 }

@@ -14,6 +14,9 @@
                         <h4>Admin</h4>
                         <p><a n:href="Homepage:detail, $group->id_employees">{$group->first_name} {$group->surname}</a></p>
                     {/if}
+                    {if $group->id_employees==$user->getId() || $user->isInRole('administrator')}
+                        <a class="btn btn-default" n:href="Group:edit, $group->id_groups">Edit group</a>
+                    {/if}
                 </div>
             </div>
             <div class="row">
@@ -28,11 +31,24 @@
             <div class="row">
                 {foreach $messages as $msg}
                 <div class="panel panel-default">
-                    <div class="panel-body">{$msg->text}</div>
+                    <div class="panel-body row"><div class="col-md-11">{$msg->text}</div><div class="col-md-1">
+                            {if $user->getId()===$msg->id_employees || $user->isInRole('administrator')}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                  <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                                  <li><a n:href="Message:edit, $msg->id_messages">Edit</a></li>
+                                  <li><a n:href="Message:delete, $msg->id_messages">Delete</a></li>
+                                </ul>
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
                     {if $msg->file}
                         <div class="panel-body">
                             <a href="{$basePath}/images/files/{$msg->file}">
-                                <img src="{$basePath}/images/files/{$msg->file}" class="img-responsive" alt="{$msg->file}">
+                                <img src="{$basePath}/images/files/{$msg->file}" class="img-responsive feed-image" alt="{$msg->file}">
                             </a>
                         </div>
                     {/if}

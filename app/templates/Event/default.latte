@@ -2,8 +2,23 @@
 
 {block content}
 
-<div n:foreach="$events as $event" class="jumbotron">
-    <h3><a n:href="Event:detail, $event->id_events">{$event->name}</a></h3>
-    {*<p>{$group->text}</p>
-    <small>Last activity at: {$group->created_dt}</small>*}
-</div>
+    <div class="row">
+        {foreach $events as $event}
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body"><a n:href="Event:detail, $event->id_events"><h4>{$event->name}</h4></a>
+                    {if $event->description}<hr><p>Description: {$event->description}</p><hr>{/if}            
+                    {if $event->place}<p>Place: {$event->place}</p>{/if}
+                </div>
+                <div class="panel-footer">Starting at {$event->starting_dt|date:'d. M Y'}</div>
+                <div n:if="$event->ending_dt" class="panel-footer">Ending at {$event->ending_dt|date:'d. M Y'}</div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+    {*<small>Last activity at: {$group->created_dt}</small>*}
+{if !$events}
+    <blockquote>
+        <h2 n:if="!$iterations">You are not in any event!</h2>
+    </blockquote>
+{/if}

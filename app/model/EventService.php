@@ -13,6 +13,12 @@ class EventService{
         return $this->database->insertId();
     }
     
+    public function editEvent($data) {
+        $id = $data['id_events'];
+        unset($data['id_events']);
+        $this->database->update(CST::TABLE_EVENTS, $data)->where('id_events=%i', $id)->execute();
+    }
+    
     public function getEmployeesByKeywordWithEvent($keyword, $id) {
         return $this->database->query('SELECT *
             FROM employees
@@ -28,11 +34,11 @@ class EventService{
     }
     
     public function getEvents($id) {
-        return $this->database->select('*')
-                ->from(CST::TABLE_EVENTS)
+        return $this->database->select('DISTINCT e.*')
+                ->from(CST::TABLE_EVENTS)->as('e')
                 ->leftJoin(CST::TABLE_EVENTS_EMPLOYEES)->as('ee')
                 ->using('(id_events)')
-                ->where('ee.id_employees=%i', $id)
+                ->where('ee.id_employees=%i', $id, 'OR e.id_employees=%i', $id)
                 ->orderBy('starting_dt desc')
                 ->fetchAll();
     }

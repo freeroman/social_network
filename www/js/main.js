@@ -3,30 +3,30 @@ $(function() {
 });
 
 $(function() {
-    $("#frm-newEvent-starting_dt").datepicker();
+    $("#frm-employeeForm-birth_dt").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
 });
 
 $(function() {
-    $( "#frm-newEvent-starting_dt" ).datepicker({
+    $( "#frm-eventForm-starting_dt" ).datepicker({
+        dateFormat: "yy-mm-dd",
         defaultDate: "+1w",
         changeMonth: true,
         numberOfMonths: 3,
         onClose: function( selectedDate ) {
-            $( "#frm-newEvent-ending_dt" ).datepicker( "option", "minDate", selectedDate );
+            $( "#frm-eventForm-ending_dt" ).datepicker( "option", "minDate", selectedDate );
         }
     });
-    $( "#frm-newEvent-ending_dt" ).datepicker({
+    $( "#frm-eventForm-ending_dt" ).datepicker({
+        dateFormat: "yy-mm-dd",
         defaultDate: "+1w",
         changeMonth: true,
         numberOfMonths: 3,
         onClose: function( selectedDate ) {
-            $( "#frm-newEvent-starting_dt" ).datepicker( "option", "maxDate", selectedDate );
+            $( "#frm-eventForm-starting_dt" ).datepicker( "option", "maxDate", selectedDate );
         }
     });
-    $( "#frm-newEvent-starting_dt" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
-    $( "#frm-newEvent-ending_dt" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
-    $( "#frm-employeeForm-birth_dt" ).datepicker();
-    $( "#frm-employeeForm-birth_dt" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 });
 
 $(document).ready(function(){

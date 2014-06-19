@@ -65,7 +65,7 @@ class MessagePresenter extends SecurePresenter {
     
     public function actionDelete($id) {
         $message = $this->context->messages->getMessageById($id);
-        if($message->id_employees===$this->getUser()->getId()){
+        if($message->id_employees===$this->getUser()->getId() || $this->getUser()->isInRole('administrator')){
             $this->context->messages->deleteMessage($id);
             $this->flashMessage('Message has been deleted', 'success');
             $this->redirect('Homepage:');

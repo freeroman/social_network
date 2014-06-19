@@ -18,8 +18,8 @@ class AclModel{
 
         $this->acl->allow('employee', 'homepage');
         $this->acl->allow('employee', 'message');
-        $this->acl->allow('employee', 'group', Array('default','detail', 'add'));
-        $this->acl->allow('employee', 'event', Array('default','detail', 'add'));
+        $this->acl->allow('employee', 'group', Array('default','detail', 'add', 'edit'));
+        $this->acl->allow('employee', 'event', Array('default','detail', 'add', 'edit'));
         $this->acl->allow('employee', 'employee', 'editEmployee');
         //$this->acl->allow('admin', 'notice', Array('delete', 'edit'));
         $this->acl->allow('administrator', Nette\Security\Permission::ALL);

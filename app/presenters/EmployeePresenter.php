@@ -70,9 +70,9 @@ class EmployeePresenter extends SecurePresenter {
     }
 
     public function processEmployeeForm($form){
-        if($id==$this->getUser()->getId() || $this->getUser()->isInRole('administrator')){
-            $values = $form->getValues();
-
+        $values = $form->getValues();
+        
+        if($this->getUser()->getId()==$values['id_employees'] || $this->getUser()->isInRole('administrator')){
             $file = $form['avatar']->getValue();
 
             if($file->name){

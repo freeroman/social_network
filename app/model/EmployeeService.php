@@ -145,15 +145,20 @@ class EmployeeService
             LEFT JOIN employees e ON e.id_employees=g.id_employees
             LEFT JOIN messages m ON m.id_walls=g.id_walls
             WHERE ge.id_employees=', $id,'ORDER BY created_dt desc')->fetchAll(null, 1);*/
-        return $this->database->query('SELECT * FROM groups_employees ge
+        return $this->database->query('SELECT DISTINCT g.* FROM groups_employees ge
             LEFT JOIN groups g USING (id_groups)
-            LEFT JOIN employees e ON e.id_employees=g.id_employees
-            WHERE ge.id_employees=', $id)->fetchAll();
+            WHERE ge.id_employees=%i', $id, 'OR g.id_employees=%i', $id)->fetchAll();
     }
     
     public function insertGroup($data) {
         $this->database->insert(CST::TABLE_GROUPS, $data)->execute();
         return $this->database->getInsertId();
+    }
+    
+    public function editGroup($data) {
+        $id = $data['id_groups'];
+        unset($data['id_groups']);
+        $this->database->update(CST::TABLE_GROUPS, $data)->where('id_groups=%i', $id)->execute();
     }
 }
 

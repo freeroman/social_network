@@ -2,26 +2,33 @@
 
 <h2>Employees</h2>
  <div class="row">
-  <div class="col-md-2" n:foreach="$friends as $emp">
-    <a n:href="Homepage:detail, $emp->id_employees">
-            {if $emp->avatar}
-                <img src="{$basePath}/images/portraits/{$emp->avatar}" class="avatar" alt="...">
-            {else}
-                <img src="{$basePath}/images/portrait.jpg" class="avatar" alt="...">
-            {/if}
-    </a>
-    <div class="caption">
-        <h4>{$emp->first_name} {$emp->surname}</h4>
-        <p>Job title: {$emp->job_title}</p>
-        {if $emp->accepted===1}
-            <a n:href="Homepage:removeFriend, $emp->id_relationships" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus-sign"></span> Remove friend</a>
-        {elseif $emp->accepted===0}
-            <a href="#" class="btn btn-info btn-sm disabled">Pending request</a>
-        {else}
-            <a n:href="Homepage:addFriend, $emp->id_employees" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus-sign"></span> Add friend</a>
-        {/if}
+     <div class="col-md-12">
+    <div class="col-md-2" n:foreach="$friends as $emp">
+      <a n:href="Homepage:detail, $emp->id_employees">
+              {if $emp->avatar}
+                  <img src="{$basePath}/images/portraits/{$emp->avatar}" class="avatar" alt="...">
+              {else}
+                  <img src="{$basePath}/images/portrait.jpg" class="avatar" alt="...">
+              {/if}
+      </a>
+      <div class="caption">
+          <h4>{$emp->first_name} {$emp->surname}</h4>
+          <p>Job title: {$emp->job_title}</p>
+          {if $emp->accepted===1}
+              <a n:href="Homepage:removeFriend, $emp->id_relationships" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus-sign"></span> Remove friend</a>
+          {elseif $emp->accepted===0}
+              <a href="#" class="btn btn-info btn-sm disabled">Pending request</a>
+          {else}
+              <a n:href="Homepage:addFriend, $emp->id_employees" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus-sign"></span> Add friend</a>
+          {/if}
+      </div>
     </div>
-  </div>
+    {if !$friends}
+        <blockquote>
+            <p>No employees match!</p>
+        </blockquote>
+    {/if}
+    </div>
 </div>
 
 <hr>
@@ -35,6 +42,11 @@
                 </div>
             </div>
         </div>
+        {if !$groups}
+            <blockquote>
+                <p>No group match!</p>
+            </blockquote>
+        {/if}
     </div>
         
     <div class="col-md-6">
@@ -47,5 +59,10 @@
                 </div>
             </div>
         </div>
+        {if !$events}
+            <blockquote>
+                <p>No event match!</p>
+            </blockquote>
+        {/if}
     </div>
 </div>

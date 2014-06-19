@@ -79,13 +79,19 @@ class MessageService{
             LEFT JOIN employees e ON id_employees=id_employees2
             INNER JOIN messages m USING(id_employees)
             LEFT JOIN files f USING (id_messages)
-            WHERE id_employees1=',$id,'AND accepted=',1, '
+            WHERE id_employees1=',$id,'AND accepted=',1, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to
             UNION
             SELECT e.*, m.*, f.file, f.type FROM relationships
             LEFT JOIN employees e ON id_employees=id_employees1
             INNER JOIN messages m USING(id_employees)
             LEFT JOIN files f USING (id_messages)
             WHERE id_employees2=',$id,'AND accepted=',1, ' AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to
+            UNION
+            SELECT e.*, m.*, f.file, f.type 
+            FROM messages m
+            LEFT JOIN employees e USING(id_employees)
+            LEFT JOIN files f USING (id_messages)
+            WHERE m.id_employees=',$id,'AND \''.date('Y-m-d H-i-s').'\' BETWEEN m.visible_from AND m.visible_to
             ORDER BY created_dt desc')
                 ->fetchAll(null, 10);
     }

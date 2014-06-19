@@ -18,8 +18,8 @@
                     <p>{$emp->surname}</p>
                     <h4>Job title</h4>
                     <p>{$emp->job_title}</p>
-                    {if $emp->id_employees==$user->getId()}
-                        <a class="btn btn-default" n:href="Employee:editEmployee, $user->getId()">Edit infromation</a>
+                    {if $emp->id_employees==$user->getId() || $user->isInRole('administrator')}
+                        <a class="btn btn-default" n:href="Employee:editEmployee, $emp->id_employees">Edit infromation</a>
                     {/if}
                 </div>
             </div>
@@ -39,29 +39,31 @@
                 <div n:foreach="$friends as $friend" class="col-md-12">
                     <a n:href="Homepage:detail, $friend->id_employees"><span class="glyphicon glyphicon-user"></span> {$friend->first_name} {$friend->surname}</a>
                 </div>
+                {if !$friends}
+                    <blockquote>
+                        <p>{$emp->first_name} does not have any friends yet!</p>
+                    </blockquote>
+                {/if}
             </div>
             <div class="row">
                 <h4>Groups</h4>
                 <div n:foreach="$groups as $group" class="col-md-12">
                     <a n:href="Group:detail, $group->id_groups"><span class="glyphicon glyphicon-info-sign"></span> {$group->name}</a>
                 </div>
+                {if !$groups}
+                    <blockquote>
+                        <p>{$emp->first_name} is not in any group yet!</p>
+                    </blockquote>
+                {/if}
             </div>
         </div>
         <div class="col-md-8">
             {control newMessage}
             <div class="row">
-                {*
-                {foreach $msgs as $msg}
-                <blockquote>
-                    <h4>{$msg->text}</h4>
-                    <footer>{$msg->created_dt|date:'d. M H:i'}</footer>
-                </blockquote>
-                {/foreach}
-                *}
                 {foreach $msgs as $msg}
                 <div class="panel panel-default">
                     <div class="panel-body row"><div class="col-md-11">{$msg->text}</div><div class="col-md-1">
-                            {if $user->getId()===$msg->id_employees}
+                            {if $user->getId()===$msg->id_employees || $user->isInRole('administrator')}
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                                   <span class="caret"></span>
@@ -77,7 +79,7 @@
                     {if $msg->file}
                         <div class="panel-body">
                             <a href="{$basePath}/images/files/{$msg->file}">
-                                <img src="{$basePath}/images/files/{$msg->file}" class="img-responsive" alt="{$msg->file}">
+                                <img src="{$basePath}/images/files/{$msg->file}" class="img-responsive feed-image" alt="{$msg->file}">
                             </a>
                         </div>
                     {/if}
@@ -87,7 +89,7 @@
                 {/foreach}
                 {if !$msgs}
                     <blockquote>
-                        <h2 n:if="!$iterations">There are not any messages yet!</h2>
+                        <h2>There are not any messages yet!</h2>
                     </blockquote>
                 {/if}
             </div>
