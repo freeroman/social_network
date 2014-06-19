@@ -145,8 +145,8 @@ class EmployeeService
             LEFT JOIN employees e ON e.id_employees=g.id_employees
             LEFT JOIN messages m ON m.id_walls=g.id_walls
             WHERE ge.id_employees=', $id,'ORDER BY created_dt desc')->fetchAll(null, 1);*/
-        return $this->database->query('SELECT DISTINCT g.* FROM groups_employees ge
-            LEFT JOIN groups g USING (id_groups)
+        return $this->database->query('SELECT DISTINCT g.* FROM groups g
+            LEFT JOIN groups_employees ge USING (id_groups)
             WHERE ge.id_employees=%i', $id, 'OR g.id_employees=%i', $id)->fetchAll();
     }
     

@@ -8,6 +8,7 @@
                 <th>Invited</th>
             </tr>        
             {foreach $employees as $emp}
+                {if $emp->id_employees!=$user->getId()}
                 <tr>
                     <td><a class="ajax" n:href="detail!, $emp->id_employees">{$emp->first_name}</a></td>
                     <td>{$emp->surname}</td>
@@ -20,6 +21,7 @@
                         {/if}
                     </td>
                 </tr>
+                {/if}
             {/foreach}          
         </table>
     {else}

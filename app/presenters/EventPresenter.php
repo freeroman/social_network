@@ -136,7 +136,7 @@ class EventPresenter extends SecurePresenter{
     public function handleAssign($id)
     {
         $administrator = $this->context->events->getEvent($this->id_events)->id_employees;
-        if($administrator==$this->user->getId()){
+        if($administrator==$this->user->getId() || $this->getUser()->isInRole('administrator')){
             $data = array(
                 'id_employees' => $id,
                 'id_events' => $this->id_events,

@@ -7,12 +7,11 @@
             <div class="row">
                 <div class="caption">
                     <h4>Group name</h4>
-                    <p>{$group->name}</p>
-                    {if $group->id_employees==$user->getId()}
+                    <p n:block=title>{$group->name}</p>
+                    <h4>Admin</h4>
+                    <p><a n:href="Homepage:detail, $group->id_employees">{$group->first_name} {$group->surname}</a></p>
+                    {if $group->id_employees==$user->getId() || $user->isInRole('administrator')}
                         <p><button class="btn btn-default show-md">Add new members</button></p>
-                    {else}
-                        <h4>Admin</h4>
-                        <p><a n:href="Homepage:detail, $group->id_employees">{$group->first_name} {$group->surname}</a></p>
                     {/if}
                     {if $group->id_employees==$user->getId() || $user->isInRole('administrator')}
                         <a class="btn btn-default" n:href="Group:edit, $group->id_groups">Edit group</a>
@@ -24,6 +23,11 @@
                 <div n:foreach="$members as $member" class="col-md-12">
                     <a n:href="Homepage:detail, $member->id_employees"><span class="glyphicon glyphicon-user"></span> {$member->first_name} {$member->surname}</a>
                 </div>
+                {if !$members}
+                    <blockquote>
+                        <p>There are not any members yet!</p>
+                    </blockquote>
+                {/if}
             </div>
         </div>
         <div class="col-md-8">
@@ -58,7 +62,7 @@
                 {/foreach}
                 {if !$messages}
                     <blockquote>
-                        <h2 n:if="!$iterations">There are not any messages yet!</h2>
+                        <h2>There are not any messages yet!</h2>
                     </blockquote>
                 {/if}
             </div>

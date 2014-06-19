@@ -82,6 +82,10 @@ a[href^="error:"] {
     max-height: 200px;
 }
 
+.content{
+    padding-top: 60px;
+}
+
 /*
 form th, form td {
 	vertical-align: top;

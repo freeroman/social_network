@@ -1,7 +1,7 @@
 {block content}
 <div class="row">
     <div class="col-md-8">
-        <h3>Recent messages</h3>
+        <h3 n:block=title>Recent messages</h3>
         {foreach $messages as $msg}
         <div class="panel panel-default">
             <div class="panel-body row"><div class="col-md-11">{$msg->text}</div><div class="col-md-1">

@@ -34,26 +34,6 @@ class EmployeePresenter extends SecurePresenter {
         //$form->addGroup()
         //        ->setOption('container', 'div class=prazdna_skupina');
 
-        $form->addGroup('Account info')
-                ->setOption('container', 'fieldset id=adress');
-        $form->addText('login', 'Login*')
-                ->setRequired('Login is mandatory')
-                ->setAttribute('class', 'form-control');
-        $form->addPassword('password', 'Password*')
-                ->setRequired('Password is mandatory')
-                ->setAttribute('class', 'form-control');   
-        $form->addPassword('password_check', 'Password check*')
-                ->setRequired('Password is mandatory')
-                ->setAttribute('class', 'form-control');          
-        $form->addText('role', 'Role*')
-                ->setRequired('Role is mandatory')
-                ->setAttribute('class', 'form-control');
-        $form->addUpload('avatar', 'Portrait');
-                //->addRule(\Nette\Application\UI\Form::IMAGE, 'File has to be image');
-                //->addRule(\Nette\Application\UI\Form::MAX_FILE_SIZE, 'File is too large (maximum 64 kB).', 64 * 1024 /* v bytech */);
-        $form->addSubmit('send', 'Create')
-            ->setAttribute('class', 'btn btn-default');
-
         $renderer = $form->getRenderer();
         $renderer->wrappers['controls']['container'] = 'div class=col-md-4';
         //$renderer->wrappers['pair']['container'] = 'div class=form-group';
@@ -70,21 +50,41 @@ class EmployeePresenter extends SecurePresenter {
     }
 
     public function processEmployeeForm($form){
-        $values = $form->getValues();
-        
-        if($this->getUser()->getId()==$values['id_employees'] || $this->getUser()->isInRole('administrator')){
-            $file = $form['avatar']->getValue();
+        $values = $form->getValues();        
+                
+        $file = $form['avatar']->getValue();
 
-            if($file->name){
-                $fileName = 'avatar_' . uniqid() . $file->name;
-                if($file->isOk()){
-                    $imgUrl = __DIR__ . '/../../www/images/portraits/'.$fileName;
-                    $file->move($imgUrl);
-                } else {
-                    $form->addError('Try reupload the picture.');
-                }
+        if($file->name){
+            $fileName = 'avatar_' . uniqid() . $file->name;
+            if($file->isOk()){
+                $imgUrl = __DIR__ . '/../../www/images/portraits/'.$fileName;
+                $file->move($imgUrl);
+            } else {
+                $form->addError('Try reupload the picture.');
             }
-
+        }  
+        
+        if(array_key_exists('id_employees', $values)){
+            if($this->getUser()->getId()==$values['id_employees'] || $this->getUser()->isInRole('administrator')){
+                $employee = array(
+                    'first_name' => $values['first_name'],
+                    'surname' => $values['surname'],
+                    'birth_dt' => $values['birth_dt'],//date('Y-m-d'),
+                    'job_title' => $values['job_title'],
+                    'id_employees' => $values['id_employees']
+                );                
+                
+                if($file->name){
+                    $employee['avatar']=$fileName;
+                }
+                $this->context->employees->editEmployee($employee);
+                $this->flashMessage('You have succesfully edited employee information.');  
+                $this->redirect('Homepage:detail', $values['id_employees']);
+            } else {
+        $this->flashMessage('You do not have permission to do this.', 'warning');
+        $this->redirect('Homepage:');                
+            }
+        } else {
             $employee = array(
                 'login' => $values['login'],
                 'first_name' => $values['first_name'],
@@ -93,32 +93,48 @@ class EmployeePresenter extends SecurePresenter {
                 'job_title' => $values['job_title'],
                 'password' => \App\Model\Passwords::hash($values['password']),
                 'role' => $values['role']
-            );
-
-            if(array_key_exists('id_employees', $values)){
-                $employee['id_employees']=$values['id_employees'];
-                if($file->name){
-                    $employee['avatar']=$fileName;
-                }
-                $this->context->employees->editEmployee($employee);
-                $this->flashMessage('You have succesfully edited employee information.');  
-                $this->redirect('Homepage:detail', $values['id_employees']);
-            } else {
-                $employee['avatar'] = $file->name ? $fileName : null;
-                $employee['id_walls'] = $this->context->employees->newWall();
-                $this->context->authorizator->add($employee);
-                $this->flashMessage('You have succesfully added new employee.');            
-            }
-            $this->redirect('employee:');
-        } else {
-            $this->flashMessage('You do not have permission to do this.', 'warning');
-            $this->redirect('Homepage:');
+            );    
+            $employee['avatar'] = $file->name ? $fileName : null;
+            $employee['id_walls'] = $this->context->employees->newWall();
+            $this->context->authorizator->add($employee);
+            $this->flashMessage('You have succesfully added new employee.');  
+            $this->redirect('employee:'); 
         }
+    }
+    
+    public function actionDefault() {
+        $form = $this['employeeForm'];
+        
+        $form->addGroup('Account info')
+                ->setOption('container', 'fieldset id=adress');
+        $form->addText('login', 'Login*')
+                ->setRequired('Login is mandatory')
+                ->setAttribute('class', 'form-control');
+        $form->addPassword('password', 'Password*')
+                ->setRequired('Password is mandatory')
+                ->setAttribute('class', 'form-control');   
+        $form->addPassword('password_check', 'Password check*')
+                ->setRequired('Password is mandatory')
+                ->setAttribute('class', 'form-control');                
+        $form->addText('role', 'Role*')
+                ->setRequired('Role is mandatory')
+                ->setAttribute('class', 'form-control');
+        $form->addUpload('avatar', 'Portrait');
+                //->addRule(\Nette\Application\UI\Form::IMAGE, 'File has to be image');
+                //->addRule(\Nette\Application\UI\Form::MAX_FILE_SIZE, 'File is too large (maximum 64 kB).', 64 * 1024 /* v bytech */);
+        $form->addSubmit('send', 'Create')
+                ->setAttribute('class', 'btn btn-default');
     }
     
     public function actionEditEmployee($id) {
         if($id==$this->getUser()->getId() || $this->getUser()->isInRole('administrator')){
             $form = $this['employeeForm'];
+        
+            $form->addGroup('Account info')
+                    ->setOption('container', 'fieldset id=adress');
+            $form->addUpload('avatar', 'Portrait');
+            $form->addSubmit('send', 'Create')
+                    ->setAttribute('class', 'btn btn-default');
 
             $employee = $this->context->employees->getEmployeeById($id);
 
@@ -140,11 +156,13 @@ class EmployeePresenter extends SecurePresenter {
 
     public function validateEmployeeForm($form){
         $values = $form->getValues();
-        if ($this->context->employees->loginExists($values['login']) && !array_key_exists('id_employees', $values)){
+        if(!array_key_exists('id_employees', $values)){
+        if ($this->context->employees->loginExists($values['login'])){
             $form->addError('Login already exists.');
         }
         if ($values['password']!=$values['password_check']){
             $form->addError('Passwords are different.');
+        }
         }
     }
 }

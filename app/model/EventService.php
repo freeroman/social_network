@@ -67,11 +67,11 @@ class EventService{
     }
     
     public function getFeedEvents($id){
-        return $this->database->select('*')
-                ->from(CST::TABLE_EVENTS_EMPLOYEES)->as('ee')
-                ->leftJoin(CST::TABLE_EVENTS)->as('ev')
+        return $this->database->select('DISTINCT ev.*')
+                ->from(CST::TABLE_EVENTS)->as('ev')
+                ->leftJoin(CST::TABLE_EVENTS_EMPLOYEES)->as('ee')
                 ->using('(id_events)')
-                ->where('ee.id_employees=%i', $id,' AND starting_dt >= NOW()')
+                ->where('(ee.id_employees=%i', $id,'OR ev.id_employees=%i',$id,') AND starting_dt >= NOW()')
                 ->orderBy('starting_dt')
                 ->fetchAll(NULL, 10);
     }

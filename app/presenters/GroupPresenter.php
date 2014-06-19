@@ -71,7 +71,8 @@ class GroupPresenter extends SecurePresenter{
     
     public function handleAssign($id)
     {
-        if($this->group['id_employees']===$this->user->getId()){
+        $group = $this->context->employees->getGroupById($this->id_groups);
+        if($group->id_employees==$this->user->getId() || $this->getUser()->isInRole('administrator')){
             $data = array(
                 'id_employees' => $id,
                 'id_groups' => $this->id_groups
@@ -86,7 +87,7 @@ class GroupPresenter extends SecurePresenter{
     protected function createComponentGroupForm()
     {
         $form = new Nette\Application\UI\Form();
-        $form->addText('name', 'Name')
+        $form->addText('name', 'Name*')
                 ->setRequired('Name can not be empty')
                 ->setAttribute('class', 'form-control');
         $form->setCurrentGroup(NULL);

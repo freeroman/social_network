@@ -7,12 +7,17 @@
             <div class="row">
                 <div class="caption">
                     <h4>Event name</h4>
-                    <p>{$event->name}</p>
-                    {if $event->id_employees==$user->getId()}
+                    <p n:block=title>{$event->name}</p>
+                    <h4>Starting at</h4>
+                    <p>{$event->starting_dt|date:'d. M Y'}</p>
+                    {if $event->ending_dt}
+                        <h4>Ending at</h4>
+                        <p>{$event->ending_dt|date:'d. M Y'}</p>
+                    {/if}
+                    <h4>Admin</h4>
+                    <p><a n:href="Homepage:detail, $event->id_employees">{$event->first_name} {$event->surname}</a></p>
+                    {if $event->id_employees==$user->getId() || $user->isInRole('administrator')}
                         <p><button class="btn btn-default show-md">Invite employees</button></p>
-                    {else}
-                        <h4>Admin</h4>
-                        <p><a n:href="Homepage:detail, $event->id_employees">{$event->first_name} {$event->surname}</a></p>
                     {/if}
                     {if $event->id_employees==$user->getId() || $user->isInRole('administrator')}
                         <a class="btn btn-default" n:href="Event:edit, $event->id_events">Edit event</a>
@@ -20,6 +25,7 @@
                 </div>
             </div>
             <div class="row">
+                {*
                 <h4>Going</h4>
                 <div n:foreach="$going as $member" class="col-md-12">
                     <a n:href="Homepage:detail, $member->id_employees"><span class="glyphicon glyphicon-user"></span> {$member->first_name} {$member->surname}</a>
@@ -27,11 +33,16 @@
                 <h4>Not going</h4>
                 <div n:foreach="$notGoing as $member" class="col-md-12">
                     <a n:href="Homepage:detail, $member->id_employees"><span class="glyphicon glyphicon-user"></span> {$member->first_name} {$member->surname}</a>
-                </div>                
+                </div>    *}            
                 <h4>Invited</h4>
                 <div n:foreach="$invited as $member" class="col-md-12">
                     <a n:href="Homepage:detail, $member->id_employees"><span class="glyphicon glyphicon-user"></span> {$member->first_name} {$member->surname}</a>
                 </div>
+                {if !$invited}
+                    <blockquote>
+                        <p>No one has been invited yet!</p>
+                    </blockquote>
+                {/if}
             </div>
         </div>
         <div class="col-md-8">
@@ -66,7 +77,7 @@
                 {/foreach}
                 {if !$messages}
                     <blockquote>
-                        <h2 n:if="!$iterations">There are not any messages yet!</h2>
+                        <h2>There are not any messages yet!</h2>
                     </blockquote>
                 {/if}
             </div>

@@ -3,6 +3,8 @@
 {block content}
 
     <div class="row">
+        <h3 n:block=title>Events</h3>
+        <hr>
         {foreach $events as $event}
         <div class="col-md-6">
             <div class="panel panel-default">
@@ -16,9 +18,8 @@
         </div>
         {/foreach}
     </div>
-    {*<small>Last activity at: {$group->created_dt}</small>*}
 {if !$events}
     <blockquote>
-        <h2 n:if="!$iterations">You are not in any event!</h2>
+        <h2>You are not in any event!</h2>
     </blockquote>
 {/if}

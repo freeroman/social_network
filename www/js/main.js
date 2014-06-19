@@ -29,8 +29,17 @@ $(function() {
     });
 });
 
+$("#frm-search-search").bind("change paste keyup", function (){
+    if($("#frm-search-search").val().length!==0){
+        $("#frm-search-send").prop('disabled', false);
+    } else {
+        $("#frm-search-send").prop('disabled', true);
+    }
+});
+
 $(document).ready(function(){
     var dom = $(".md-modal");
+    $("#frm-search-send").prop('disabled', true);
     
     $(".md-overlay").click(function(){
         dom.removeClass("md-show");

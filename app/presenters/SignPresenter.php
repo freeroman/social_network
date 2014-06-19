@@ -11,8 +11,6 @@ use Nette,
  */
 class SignPresenter extends BasePresenter
 {
-
-
 	/**
 	 * Sign-in form factory.
 	 * @return Nette\Application\UI\Form
